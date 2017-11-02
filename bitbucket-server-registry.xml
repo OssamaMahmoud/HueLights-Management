@@ -1,0 +1,10 @@
+<application>
+  <component name="BitbucketServerRegistry">
+    <instances>
+      <instance uuid="aa7c2329-69ba-4938-9da8-908138237532" baseUri="https://repo.csd.uwo.ca/" />
+    </instances>
+    <lookup>
+      <record scheme="https" hostname="repo.csd.uwo.ca" port="-1" path="/" uuid="aa7c2329-69ba-4938-9da8-908138237532" />
+    </lookup>
+  </component>
+</application>
