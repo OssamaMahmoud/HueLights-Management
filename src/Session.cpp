@@ -62,6 +62,7 @@ Session::Session(const std::string& sqliteDb)
     mapClass<AuthInfo>("auth_info");
     mapClass<AuthInfo::AuthIdentityType>("auth_identity");
     mapClass<AuthInfo::AuthTokenType>("auth_token");
+    mapClass<Bridge>("bridges");
 
     try {
         createTables();
@@ -84,6 +85,8 @@ Wt::Auth::AbstractUserDatabase& Session::users()
     return *users_;
 }
 
+
+//use this to get a ptr to the user where ever you are in the application
 dbo::ptr<User> Session::user() const
 {
     if (login_.loggedIn()) {
@@ -93,9 +96,24 @@ dbo::ptr<User> Session::user() const
         return dbo::ptr<User>();
 }
 
+dbo::ptr<User> Session::user(const Wt::Auth::User& authUser)
+{
+    dbo::ptr<AuthInfo> authInfo = users_->find(authUser);
+
+    dbo::ptr<User> user = authInfo->user();
+
+    if (!user) {
+        user = add(new User());
+        authInfo.modify()->setUser(user);
+    }
+
+    return user;
+}
+
 const Wt::Auth::AuthService& Session::auth()
 {
     myAuthService.setEmailVerificationRequired(false);
+    myAuthService.setIdentityPolicy(Wt::Auth::IdentityPolicy::EmailAddressIdentity);
     return myAuthService;
 }
 

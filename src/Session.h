@@ -29,11 +29,14 @@ public:
     static const Wt::Auth::AuthService& auth();
     static const Wt::Auth::PasswordService& passwordAuth();
     static const std::vector<const Wt::Auth::OAuthService *>& oAuth();
+    Wt::Dbo::ptr<User> user(const Wt::Auth::User &authUser);
+
 
 private:
     dbo::backend::Sqlite3 connection_;
     UserDatabase *users_;
     Wt::Auth::Login login_;
+
 };
 
 #endif // SESSION_H_

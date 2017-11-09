@@ -9,9 +9,13 @@
 
 #include "Session.h"
 #include "User.h"
+#include "AuthWidget.h"
 
 class AuthApplication : public Wt::WApplication
 {
+
+
+
 public:
   AuthApplication(const Wt::WEnvironment& env)
     : Wt::WApplication(env),
@@ -24,9 +28,11 @@ public:
 
     //useStyleSheet("css/style.css");
 
-    Wt::Auth::AuthWidget *authWidget
-      = new Wt::Auth::AuthWidget(Session::auth(), session_.users(),
-				 session_.login());
+
+    AuthWidget *authWidget
+      = new AuthWidget(session_);
+    //authWidget->registrationModel();
+
 
     authWidget->model()->addPasswordAuth(&Session::passwordAuth());
     //authWidget->model()->addOAuth(Session::oAuth());
@@ -58,7 +64,10 @@ private:
 
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 {
-  return new AuthApplication(env);
+  AuthApplication *app = new AuthApplication(env);
+  app->messageResourceBundle().use("templates");
+  app->messageResourceBundle().use(AuthApplication::appRoot() + "templates");
+  return app;
 }
 
 int main(int argc, char **argv)
