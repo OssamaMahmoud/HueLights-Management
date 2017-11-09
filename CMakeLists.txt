@@ -7,6 +7,8 @@ link_directories(/usr/local/lib)
 
 set(CMAKE_CXX_STANDARD 11)
 
+FILE(COPY "templates.xml" DESTINATION ".")
+
 set(SOURCE_FILES
         src/User.h
         src/Session.h
