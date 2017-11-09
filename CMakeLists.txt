@@ -8,11 +8,11 @@ link_directories(/usr/local/lib)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
-        User.h
-        Session.h
-        Session.cpp
-        User.cpp
-        Auth1.cpp)
+        src/User.h
+        src/Session.h
+        src/Session.cpp
+        src/User.cpp
+        src/Auth1.cpp src/AuthWidget.cpp src/AuthWidget.h src/Bridge.cpp src/Bridge.h src/UserDetailsModel.cpp src/UserDetailsModel.h src/RegistrationView.cpp src/RegistrationView.h)
 
 add_executable(auth ${SOURCE_FILES})
 
