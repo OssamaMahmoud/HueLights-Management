@@ -8,11 +8,14 @@ using namespace Wt;
 using namespace std;
 Bridge::Bridge() {
 
+	//the page where the emulator is sending out the bridge json
 	string url_emulator = "http://localhost:8080/api/newdeveloper";
 	Http::Client *client = new Http::Client(this);
 	client->setTimeout(2);
 	client->setMaximumResponseSize(100*1024);
 	client->done().connect(boost::bind(&Bridge::handleHttpResponse,this,_1,_2));
+	
+	//getting the json from the emulator through a http get request
 	if (client->get(url_emulator)) 
 		cout<<"getting webpage"<<endl;
 	else{
@@ -23,9 +26,11 @@ Bridge::Bridge() {
 Bridge::~Bridge(){
 }
 void Bridge::handleHttpResponse(boost::system::error_code err, const Http::Message& response)  {
+	//if there was no error connecting and we're on the correct page
 	if (!err && response.status() == 200){
 		cout<< response.body() << endl;
 
+		//parse the string received by the http get method
 		Json::parse(response.body(), bridgeData, err);
 		/*cout << "after parse "<< err << endl;
 		Json::Object lights = bridgeData.get("lights");
