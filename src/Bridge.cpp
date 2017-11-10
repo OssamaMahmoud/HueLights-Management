@@ -3,3 +3,46 @@
 //
 
 #include "Bridge.h"
+
+using namespace Wt;
+using namespace std;
+Bridge::Bridge(){
+
+	setTitle("Connect to emulator");
+	string url_emulator = "http://localhost:8080/api/newdeveloper";
+	Http::Client *client = new Http::Client(this);
+	client->setTimeout(2);
+	client->setMaximumResponseSize(100*1024);
+	client->done().connect(boost::bind(&Bridge::handleHttpResponse,this,_1,_2));
+	/* todo:
+		Get newdeveloper to be the user sign in variable 
+
+
+	*/
+	if (client->get(url_emulator)) 
+		WApplication::instance()->deferRendering();
+	else{
+		cout << "can't open url" << endl;
+	}
+}
+
+Bridge::~Bridge(){
+
+}
+
+void Bridge::handleHttpResponse(boost::system::error_code err, const Http::Message& response){
+	WApplication::instance()->resumeRendering();
+	if (!err && response.status() == 200){
+		cout<< response.body() << endl;
+
+		Json::parse(response.body(), bridgeData, err);
+		cout << "after parse "<< err << endl;
+		Json::Object lights = bridgeData.get("lights");
+		Json::Object num = lights.get("1");
+		string name = num.get("name");
+		cout << name << endl;
+	}
+	else {
+		cerr << "Error handling the http response: "<< err << ". Response code: "<< response.status()<< endl;
+	}
+}

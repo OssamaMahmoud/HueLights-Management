@@ -10,7 +10,7 @@
 #include "Session.h"
 #include "User.h"
 #include "AuthWidget.h"
-
+#include "Bridge.h"
 class AuthApplication : public Wt::WApplication
 {
 
@@ -48,9 +48,9 @@ public:
     if (session_.login().loggedIn()) {
       const Wt::Auth::User& u = session_.login().user();
       Wt::log("notice")
-	<< "User " << u.id()
-	<< " (" << u.identity(Wt::Auth::Identity::LoginName) << ")"
-	<< " logged in.";
+  << "User " << u.id()
+  << " (" << u.identity(Wt::Auth::Identity::LoginName) << ")"
+  << " logged in.";
     } else{
       Wt::log("notice") << "User logged out.";
 
@@ -76,6 +76,8 @@ int main(int argc, char **argv)
     Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
 
     server.addEntryPoint(Wt::Application, createApplication);
+    Bridge bridge;
+    server.addResource(&bridge, "/bridge");
 
     Session::configureAuth();
 
