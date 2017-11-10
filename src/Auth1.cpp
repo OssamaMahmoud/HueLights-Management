@@ -47,10 +47,12 @@ public:
   void authEvent() {
     if (session_.login().loggedIn()) {
       const Wt::Auth::User& u = session_.login().user();
-      Wt::log("notice")
-	<< "User " << u.id()
-	<< " (" << u.identity(Wt::Auth::Identity::LoginName) << ")"
-	<< " logged in.";
+      //redirect to bridge page here
+
+      Wt::Dbo::Transaction t(session_);
+      dbo::ptr<User> user = session_.user();
+      Wt::log("\nNOTICE")
+              << "firstname " << user->getFName() << " lastname " << user->getLName();
     } else{
       Wt::log("notice") << "User logged out.";
 

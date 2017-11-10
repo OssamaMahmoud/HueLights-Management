@@ -32,3 +32,12 @@ const Wt::Dbo::weak_ptr<AuthInfo> &User::getAuthInfo() const {
 void User::setAuthInfo(const Wt::Dbo::weak_ptr<AuthInfo> &authInfo) {
     User::authInfo = authInfo;
 }
+
+const std::string &User::getFName() const {
+    return fName;
+}
+
+const std::string &User::getLName() const {
+    return lName;
+}
+
