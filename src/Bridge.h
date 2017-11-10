@@ -23,7 +23,7 @@ class User;
 class Bridge: public WResource{
 	public:
 	    Bridge();
-	    virtual ~Bridge();
+	    ~Bridge();
 		Json::Object bridgeData;
 
 	    dbo::ptr<User> user;
@@ -34,10 +34,8 @@ class Bridge: public WResource{
 	        dbo::belongsTo(a, user, "user");
 	    }
 
-
-	protected: 
+	private: 
 		void handleHttpResponse(boost::system::error_code err, const Http::Message& response);
-
 };
 
 #endif //AUTH_BRIDGE_H

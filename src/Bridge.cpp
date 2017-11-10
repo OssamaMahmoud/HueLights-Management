@@ -8,17 +8,11 @@ using namespace Wt;
 using namespace std;
 Bridge::Bridge(){
 
-	setTitle("Connect to emulator");
 	string url_emulator = "http://localhost:8080/api/newdeveloper";
 	Http::Client *client = new Http::Client(this);
 	client->setTimeout(2);
 	client->setMaximumResponseSize(100*1024);
 	client->done().connect(boost::bind(&Bridge::handleHttpResponse,this,_1,_2));
-	/* todo:
-		Get newdeveloper to be the user sign in variable 
-
-
-	*/
 	if (client->get(url_emulator)) 
 		WApplication::instance()->deferRendering();
 	else{
