@@ -6,7 +6,7 @@
 
 using namespace Wt;
 using namespace std;
-Bridge::Bridge(){
+Bridge::Bridge() {
 
 	string url_emulator = "http://localhost:8080/api/newdeveloper";
 	Http::Client *client = new Http::Client(this);
@@ -14,18 +14,15 @@ Bridge::Bridge(){
 	client->setMaximumResponseSize(100*1024);
 	client->done().connect(boost::bind(&Bridge::handleHttpResponse,this,_1,_2));
 	if (client->get(url_emulator)) 
-		WApplication::instance()->deferRendering();
+		cout<<"getting webpage"<<endl;
 	else{
 		cout << "can't open url" << endl;
 	}
 }
 
 Bridge::~Bridge(){
-
 }
-
-void Bridge::handleHttpResponse(boost::system::error_code err, const Http::Message& response){
-	WApplication::instance()->resumeRendering();
+void Bridge::handleHttpResponse(boost::system::error_code err, const Http::Message& response)  {
 	if (!err && response.status() == 200){
 		cout<< response.body() << endl;
 

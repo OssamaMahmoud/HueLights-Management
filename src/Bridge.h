@@ -1,5 +1,5 @@
-#ifndef AUTH_BRIDGE_H
-#define AUTH_BRIDGE_H
+#ifndef AUTH_BRIDGE_H_
+#define AUTH_BRIDGE_H_
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
 #include <Wt/WLineEdit>
@@ -16,14 +16,15 @@
 #include "User.h"
 
 using namespace Wt;
+using namespace Wt::Http;
 namespace dbo = Wt::Dbo;
 
 class User;
 
-class Bridge: public WResource{
+class Bridge: public WResource {
 	public:
 	    Bridge();
-	    ~Bridge();
+	    virtual ~Bridge();
 		Json::Object bridgeData;
 
 	    dbo::ptr<User> user;
@@ -33,8 +34,9 @@ class Bridge: public WResource{
 	    {
 	        dbo::belongsTo(a, user, "user");
 	    }
-
-	private: 
+ 
+	protected: 
+		void handleRequest(const Request &request, Response &response);
 		void handleHttpResponse(boost::system::error_code err, const Http::Message& response);
 };
 
