@@ -36,11 +36,11 @@ void Bridge::handleHttpResponse(boost::system::error_code err, const Http::Messa
 		cout<< response.body() << endl;
 
 		Json::parse(response.body(), bridgeData, err);
-		cout << "after parse "<< err << endl;
+		/*cout << "after parse "<< err << endl;
 		Json::Object lights = bridgeData.get("lights");
 		Json::Object num = lights.get("1");
 		string name = num.get("name");
-		cout << name << endl;
+		cout << name << endl;*/
 	}
 	else {
 		cerr << "Error handling the http response: "<< err << ". Response code: "<< response.status()<< endl;

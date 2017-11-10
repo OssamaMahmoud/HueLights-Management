@@ -1,6 +1,5 @@
 #ifndef AUTH_BRIDGE_H
 #define AUTH_BRIDGE_H
-#include <Wt/WApplication>
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
 #include <Wt/WLineEdit>
@@ -25,7 +24,6 @@ class Bridge: public WResource{
 	public:
 	    Bridge();
 	    virtual ~Bridge();
-		bool emptyObj; 
 		Json::Object bridgeData;
 
 	    dbo::ptr<User> user;
