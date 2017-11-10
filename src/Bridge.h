@@ -11,6 +11,7 @@
 #include <Wt/Json/Object>
 #include <Wt/Json/Parser>
 #include <Wt/Dbo/Dbo>
+#include <Wt/WResource>
 #include <string>
 
 #include "User.h"
@@ -36,12 +37,9 @@ class Bridge: public WResource{
 	    }
 
 
-	private: 
+	protected: 
 		void handleHttpResponse(boost::system::error_code err, const Http::Message& response);
 
 };
-
-
-#endif //AUTH_BRIDGE_H
 
 #endif //AUTH_BRIDGE_H
