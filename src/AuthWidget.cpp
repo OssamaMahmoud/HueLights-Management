@@ -41,8 +41,8 @@ void AuthWidget::createLoggedInView(){
     //this is where u can add a widget
     WPushButton *logout = new WPushButton("LOGOUT");
     WText *name = new WText("First Name: "  + user->getFName() + " Last Name: " + user->getLName() );
-    Bridge *bridge =  new Bridge();
-    bridge->defaultConnect("127.0.0.1", "8080", "LOOL");
+    //Bridge *bridge =  new Bridge();
+    //bridge->defaultConnect("0.0.0.0", "8080", "LOOL");
 
     //WPushButton *bridge = new WPushButton("BRIDGE");
 
@@ -53,6 +53,6 @@ void AuthWidget::createLoggedInView(){
     //bind to name put in the template
     bindWidget("name", name);
     bindWidget("logoutButton", logout);
-    bindWidget("bridge", bridge);
+    //bindWidget("bridge", bridge);
 
 }

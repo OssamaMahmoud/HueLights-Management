@@ -23,7 +23,7 @@ void Bridge::defaultConnect(string the_address, string the_port, string the_refe
     set_reference(the_reference);
 
     string url = "http://" + address + ":" + port + "/api/newdeveloper/config";
-    Http::Client *client = new Http::Client(this);
+    Http::Client *client = new Http::Client();
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
     client->done().connect(boost::bind(&Bridge::handleDefaultResponse,this,_1,_2));
@@ -45,7 +45,7 @@ void Bridge::newUserConnect(string the_address, string the_port, string devicety
     set_port(the_port);
 
     string url = "http://" + the_address + ":" + the_port + "/api";
-    Http::Client *client = new Http::Client(this);
+    Http::Client *client = new Http::Client();
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
     client->done().connect(boost::bind(&Bridge::handleNewUserResponse,this,_1,_2));
@@ -82,7 +82,7 @@ bool Bridge::modifyBridge(string address, string port, string username, string r
 void Bridge::testBridge(string the_address, string the_port, string the_username) {
 
     string url = "http://" + the_address + ":" + the_port + "api/" + the_username + "/config";
-    Http::Client *client = new Http::Client(this);
+    Http::Client *client = new Http::Client();
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
     client->done().connect(boost::bind(&Bridge::handleModifyResponse,this,_1,_2));
