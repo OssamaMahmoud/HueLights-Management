@@ -72,19 +72,27 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 
 int main(int argc, char **argv)
 {
-  try {
-    Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
+    try {
+        WServer server(argv[0],"");
+        server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
 
-    server.addEntryPoint(Wt::Application, createApplication);
-    Bridge bridge;
-    server.addResource(&bridge, "/bridge");
+        server.addEntryPoint(Wt::Application, createApplication);
+        //Bridge bridge;
+        //server.addResource(&bridge, "/bridge");
 
-    Session::configureAuth();
+        Session::configureAuth();
 
-    server.run();
-  } catch (Wt::WServer::Exception& e) {
-    std::cerr << e.what() << std::endl;
-  } catch (std::exception &e) {
-    std::cerr << "exception: " << e.what() << std::endl;
-  }
+        server.run();
+        if (server.start()) {
+            int sig = Wt::WServer::waitForShutdown(argv[0]);
+
+            cerr << "Shutdown (signal = " << sig << ")" << std::endl;
+            server.stop();
+        }
+    } catch (Wt::WServer::Exception& e) {
+        std::cerr << e.what() << std::endl;
+    } catch (std::exception &e) {
+        std::cerr << "exception: " << e.what() << std::endl;
+    }
+
 }

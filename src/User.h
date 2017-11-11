@@ -17,16 +17,20 @@ class User {
 private:
     std::string fName;
     std::string lName;
-    dbo::collection < dbo::ptr<Bridge> > bridgeList;
+    //dbo::collection < dbo::ptr<Bridge> > bridgeList;
     dbo::weak_ptr<AuthInfo> authInfo;
 public:
     void setFName(const std::string &fName);
 
     void setLName(const std::string &lName);
 
-    const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &getBridgeList() const;
+    //const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &getBridgeList() const;
 
-    void setBridgeList(const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &bridgeList);
+    //void setBridgeList(const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &bridgeList);
+
+    const std::string &getFName() const;
+
+    const std::string &getLName() const;
 
     const Wt::Dbo::weak_ptr<AuthInfo> &getAuthInfo() const;
 
@@ -42,7 +46,7 @@ public:
         dbo::field(a, fName, "fName");
         dbo::field(a, lName, "lName");
         dbo::hasOne(a, authInfo, "user");
-        dbo::hasMany(a, bridgeList, dbo::ManyToOne, "user");
+        //dbo::hasMany(a, bridgeList, dbo::ManyToOne, "user");
     }
 
 

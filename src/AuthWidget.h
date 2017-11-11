@@ -25,6 +25,8 @@
 
  private:
      Session& session_;
+
+     void createLoggedInView();
  };
 
 

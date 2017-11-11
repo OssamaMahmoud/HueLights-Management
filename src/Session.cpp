@@ -62,7 +62,7 @@ Session::Session(const std::string& sqliteDb)
     mapClass<AuthInfo>("auth_info");
     mapClass<AuthInfo::AuthIdentityType>("auth_identity");
     mapClass<AuthInfo::AuthTokenType>("auth_token");
-    mapClass<Bridge>("bridges");
+    //mapClass<Bridge>("bridges");
 
     try {
         createTables();
