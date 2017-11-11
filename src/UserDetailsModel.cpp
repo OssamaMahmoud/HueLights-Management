@@ -14,7 +14,7 @@ UserDetailsModel::UserDetailsModel(Session& session, Wt::WObject *parent)
           _session(session)
 {
     this->addField(fNameField, "Enter first name");
-    this->addField(lNameField, "Enter Last nmae");
+    this->addField(lNameField, "Enter Last name");
 }
 
 void UserDetailsModel::save(const Wt::Auth::User& authUser)
