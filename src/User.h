@@ -36,9 +36,7 @@ public:
 
     void setAuthInfo(const Wt::Dbo::weak_ptr<AuthInfo> &authInfo);
 
-    const std::string &getFName() const;
 
-    const std::string &getLName() const;
 
     //add bridges list here
 
