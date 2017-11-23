@@ -46,7 +46,6 @@ void AuthWidget::createLoggedInView(){
 
     //WPushButton *bridge = new WPushButton("BRIDGE");
 
-
     printf("\n\n\n\n\n\n email    %s", user->getAuthInfo()->email());
     //button tings
     logout->clicked().connect(&login(), &Auth::Login::logout);
@@ -55,7 +54,5 @@ void AuthWidget::createLoggedInView(){
     bindWidget("name", name);
     bindWidget("logoutButton", logout);
     //bindWidget("bridge", bridge);
-
-    //
 
 }

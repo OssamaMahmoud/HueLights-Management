@@ -28,13 +28,18 @@ class User;
 
 class Bridge: public WContainerWidget{
 public:
-
-    Bridge(WContainerWidget *parent);
-
-
+    explicit Bridge(WContainerWidget *parent = 0);
     virtual ~Bridge();
     bool emptyObj;
     Json::Object bridgeData;
+
+    dbo::ptr<User> user;
+
+    template<class Action>
+    void persist(Action& a)
+    {
+        dbo::belongsTo(a, user, "user");
+    }
 
 
     /*
@@ -42,10 +47,7 @@ public:
      * not required by the project
      * and DO NOT use it
      */
-//    void newUserConnect(string address, string port, string devicetype, string username, string reference);
-
-
-    void newUserConnect(string the_address, string the_port, string devicetype, string the_reference);
+    void newUserConnect(string address, string port, string devicetype, string username, string reference);
 
     /* use defualt user name to connect bridge */
     void defaultConnect(string address, string port, string reference);
@@ -62,6 +64,13 @@ public:
      */
     void testBridge(string address, string port, string username);
 
+    void get_allLights();
+    void get_oneLight(string light_id);
+    void change_lightName(string light_id, string light_name);
+    void change_lightTurn(string light_id, string trueORfalse);
+    void change_lightColour(string light_id, string colourCode);//colour from 0 to 65280
+    void change_lightBrightness(string light_id, string brightness);//brightness from 0 to 254
+
     void set_reference(string the_reference);
     string get_reference();
     void set_userName(string the_name);
@@ -76,13 +85,46 @@ public:
     string get_newUserResponse();
     void set_modifyResponse(string response);
     string get_modifyResponse();
-
+    void set_URL(string the_url);
+    string get_URL();
+    void set_success(string flag);
+    string get_success();
+    void set_modifySuccess(string flag);
+    string get_modifySuccess();
+    void set_lightSuccess(string flag);
+    string get_lightSuccess();
+    void set_lightSet(set<string> set);
+    string get_lightSet();
+    void set_oneLightContent(string content);
+    string get_oneLightContent();
+    void set_newLightNameResponse(string response);
+    string get_newLightNameResponse();
+    void set_newLightTurnResponse(string response);
+    string get_newLightTurnResponse();
+    void set_newLightColourResponse(string response);
+    string get_newLightColourResponse();
+    void set_newLightBrightnessResponse(string response);
+    string get_newLightBrightnessResponse();
 
 
 private:
-    void handleDefaultResponse(boost::system::error_code err, const Http::Message& response) ;
-    void handleNewUserResponse(boost::system::error_code err, const Http::Message& response) ;
-    void handleModifyResponse(boost::system::error_code err, const Http::Message& response) ;
+    void handleDefaultResponse(boost::system::error_code err, const Http::Message& response);
+    void handleNewUserResponse(boost::system::error_code err, const Http::Message& response);
+    void handleModifyResponse(boost::system::error_code err, const Http::Message& response);
+    void handleAllLightsResponse(boost::system::error_code err, const Http::Message &response);
+    void handleOneLightResponse(boost::system::error_code err, const Http::Message &response);
+    void handleChangeLightNameResponse(boost::system::error_code err, const Http::Message &response);
+    void handleChangeLightTurnResponse(boost::system::error_code err, const Http::Message &response);
+    void handleChangeLightColourResponse(boost::system::error_code err, const Http::Message &response);
+    void handleChangeLightBrightnessResponse(boost::system::error_code err, const Http::Message &response);
+
+    set<string> lightSet;
+    string newLightNameResponse;
+    string newLightTurnResponse;
+    string newLightColourResponse;
+    string newLightBrightnessResponse;
+    string oneLightContent;
+    string URL;
     string reference;
     string userName;
     string address;
@@ -90,6 +132,10 @@ private:
     string defaultResponse;
     string newUserResponse;
     string modifyResponse;
+    string responseBody;
+    string success;
+    string modifySuccess;
+    string lightSuccess;
 
 
 };
