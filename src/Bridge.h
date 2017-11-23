@@ -28,18 +28,13 @@ class User;
 
 class Bridge: public WContainerWidget{
 public:
-    Bridge(WContainerWidget *parent = 0);
+
+    Bridge(WContainerWidget *parent);
+
+
     virtual ~Bridge();
     bool emptyObj;
     Json::Object bridgeData;
-
-    dbo::ptr<User> user;
-
-    template<class Action>
-    void persist(Action& a)
-    {
-        dbo::belongsTo(a, user, "user");
-    }
 
 
     /*
@@ -47,7 +42,10 @@ public:
      * not required by the project
      * and DO NOT use it
      */
-    void newUserConnect(string address, string port, string devicetype, string username, string reference);
+//    void newUserConnect(string address, string port, string devicetype, string username, string reference);
+
+
+    void newUserConnect(string the_address, string the_port, string devicetype, string the_reference);
 
     /* use defualt user name to connect bridge */
     void defaultConnect(string address, string port, string reference);
@@ -92,6 +90,7 @@ private:
     string defaultResponse;
     string newUserResponse;
     string modifyResponse;
+
 
 };
 

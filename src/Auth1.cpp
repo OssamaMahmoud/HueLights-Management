@@ -221,8 +221,11 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
     return app;
 }
 
+
+
 int main(int argc, char **argv)
 {
+
     try {
         Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
 

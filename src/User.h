@@ -8,7 +8,8 @@
 namespace dbo = Wt::Dbo;
 
 class User;
-class Bridge;
+
+
 typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
 
 
@@ -17,8 +18,8 @@ class User {
 private:
     std::string fName;
     std::string lName;
-    //dbo::collection < dbo::ptr<Bridge> > bridgeList;
     dbo::weak_ptr<AuthInfo> authInfo;
+
 public:
     void setFName(const std::string &fName);
 
@@ -31,6 +32,8 @@ public:
     const std::string &getFName() const;
 
     const std::string &getLName() const;
+
+
 
     const Wt::Dbo::weak_ptr<AuthInfo> &getAuthInfo() const;
 
@@ -48,7 +51,6 @@ public:
         dbo::field(a, fName, "fName");
         dbo::field(a, lName, "lName");
         dbo::hasOne(a, authInfo, "user");
-        //dbo::hasMany(a, bridgeList, dbo::ManyToOne, "user");
     }
 
 

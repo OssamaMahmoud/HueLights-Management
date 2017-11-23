@@ -6,6 +6,7 @@
 
 using namespace Wt;
 using namespace std;
+
 Bridge::Bridge(WContainerWidget *parent):WContainerWidget(parent){
 
 }
@@ -14,11 +15,13 @@ Bridge::~Bridge(){
 
 }
 
+
 /************************************* http request ****************************************/
 
 void Bridge::defaultConnect(string the_address, string the_port, string the_reference) {
     set_address(the_address);
     set_port(the_port);
+
     set_userName("newdeveloper");
     set_reference(the_reference);
 
@@ -38,9 +41,15 @@ void Bridge::defaultConnect(string the_address, string the_port, string the_refe
     }
 }
 
-void Bridge::newUserConnect(string the_address, string the_port, string devicetype, string the_username, string the_reference) {
+void Bridge::newUserConnect(string the_address, string the_port, string devicetype, string the_reference)
+         {
+
+    //have to add it to the user in this area
+    //ok so im use the session instead of just passing in the username
     set_reference(the_reference);
+    string the_username = "newdeveloper";
     set_userName(the_username);
+
     set_address(the_address);
     set_port(the_port);
 
@@ -53,6 +62,7 @@ void Bridge::newUserConnect(string the_address, string the_port, string devicety
     string JSONformat_info = R"({"devicetype": ")" +devicetype + R"(", "name": ")" + the_username + R"("})";
     Http::Message info = Http::Message();
     info.addBodyText(JSONformat_info);
+
 
     if(client->post(url, info)){
         WApplication::instance()->deferRendering();
