@@ -35,7 +35,7 @@ public:
 
         setTitle("Hue Lighting");
         Wt :: WApplication :: instance()-> useStyleSheet("css/styleSheet.css");
-
+        
         toHome();
 
     }
