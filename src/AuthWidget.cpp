@@ -53,6 +53,8 @@ void AuthWidget::createLoggedInView(){
     //bind to name put in the template
     bindWidget("name", name);
     bindWidget("logoutButton", logout);
+
+
     //bindWidget("bridge", bridge);
 
 }
