@@ -6,12 +6,19 @@
 #include <Wt/Dbo/Session>
 #include <Wt/Dbo/ptr>
 #include <Wt/Dbo/backend/Sqlite3>
+#include "Wt/Auth/Dbo/AuthInfo"
+
 
 #include "User.h"
 
+
 namespace dbo = Wt::Dbo;
 
+
+
+
 typedef Wt::Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
+
 
 class Session : public dbo::Session
 {

@@ -22,6 +22,7 @@
 #include "Session.h"
 #include "User.h"
 #include "AuthWidget.h"
+#include "Group.h"
 
 //using namespace Wt;
 
@@ -37,6 +38,8 @@ public:
         Wt :: WApplication :: instance()-> useStyleSheet("css/styleSheet.css");
         
         toHome();
+
+
 
     }
     void toHome() {
@@ -121,6 +124,33 @@ public:
 
 
     void toLogin() {
+
+
+        //group testing WORKS
+        //the getstate does not actually get the actions for some reason..
+        //but the result is visible in the actial emulator... wierd
+//        Bridge *bridge = new Bridge();
+//        bridge->defaultConnect("localhost", "8080","");
+//        Group *group = new Group("newdeveloper", "localhost", "8080", "LOOOOOOOOOOOOL", "\"1\"");
+//        std::cout << "\n\n\nthe group id is:  " << group->getName() << " AND ID IS " << group->getId() <<endl;
+//        sleep(2);
+//        group->setId("2");
+//        group->getState();
+//        group->getAllGroups();
+//
+//        group->addLight("2");
+//        group->getState();
+//        group->changeState("false", "255", "255", "255");
+//            group->getState();
+//        group->removeLight("1");
+//        group->getState();
+//        group->changeState("true", "255", "255", "255");
+
+        //group->deleteGroup();
+
+
+
+        //std::cout << "\n\n\n\n current settings are "
 
         setTitle("Login");
         tableMenu -> clear();
@@ -221,8 +251,11 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
     return app;
 }
 
+
+
 int main(int argc, char **argv)
 {
+
     try {
         Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
 
