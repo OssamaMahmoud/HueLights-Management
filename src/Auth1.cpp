@@ -129,22 +129,26 @@ public:
         //group testing WORKS
         //the getstate does not actually get the actions for some reason..
         //but the result is visible in the actial emulator... wierd
-//        Bridge *bridge = new Bridge();
-//        bridge->defaultConnect("localhost", "8080","");
-//        Group *group = new Group("newdeveloper", "localhost", "8080", "LOOOOOOOOOOOOL", "\"1\"");
-//        std::cout << "\n\n\nthe group id is:  " << group->getName() << " AND ID IS " << group->getId() <<endl;
-//        sleep(2);
-//        group->setId("2");
-//        group->getState();
-//        group->getAllGroups();
-//
+        Bridge *bridge = new Bridge();
+        bridge->defaultConnect("localhost", "8080","");
+        Group *group = new Group();
+        group->makeGroup("newdeveloper", "localhost", "8080", "LOOOOOOOOOOOOL", "\"1\"");
+        std::cout << "\n\n\nthe grup id is:  " << group->getName() << " AND ID IS " << group->getId() <<endl;
+        //sleep(2);
+        group->setId("9");
+
+        //group->getState("2");
+
+        group->getGroups();
+
 //        group->addLight("2");
-//        group->getState();
-//        group->changeState("false", "255", "255", "255");
-//            group->getState();
-//        group->removeLight("1");
-//        group->getState();
-//        group->changeState("true", "255", "255", "255");
+        //group->getState("2");
+        //group->changeState("false", "0", "30000", "255");
+        //sleep(3);
+        //group->getState("2");
+  //      group->removeLight("1");
+        //group->getState("2");
+       // group->changeState("true", "255", "30000", "255");
 
         //group->deleteGroup();
 
