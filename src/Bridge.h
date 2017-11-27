@@ -46,6 +46,7 @@ public:
      * user optionally give an user name other than "newdeveloper"
      * not required by the project
      * and DO NOT use it
+     *
      */
     void newUserConnect(string address, string port, string devicetype, string username, string reference);
 

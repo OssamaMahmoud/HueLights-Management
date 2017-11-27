@@ -12,18 +12,19 @@ set(SOURCE_FILES
         src/Auth1.cpp
         src/AuthWidget.cpp
         src/AuthWidget.h
+        src/Session.cpp
+        src/Session.h
         src/Bridge.cpp
         src/Bridge.h
         src/RegistrationView.cpp
         src/RegistrationView.h
-        src/Session.cpp
-        src/Session.h
+
         src/User.cpp
         src/User.h
         src/UserDetailsModel.cpp
         src/UserDetailsModel.h
         src/css/styleSheet.css
-        )
+        src/Group.cpp src/Group.h)
 
 add_executable(team18 ${SOURCE_FILES})
 
