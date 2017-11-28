@@ -13,6 +13,8 @@
 #include <Wt/Http/Client>
 #include <Wt/Http/Request>
 #include <Wt/Json/Object>
+#include <Wt/Json/Array>
+#include <Wt/Json/Value>
 #include <Wt/Json/Parser>
 #include <Wt/WResource>
 
@@ -54,9 +56,8 @@ public:
     /*
      * modify address, port, username, or reference
      * will call testBridge after the change
-     * return TRUE for success, FALSE for failure
      */
-    bool modifyBridge(string address, string port, string username, string reference);
+    void modifyBridge(string address, string port, string username, string reference);
     /*
      * to test after:
      * create new user name
@@ -64,6 +65,7 @@ public:
      */
     void testBridge(string address, string port, string username);
 
+    //functions for light
     void get_allLights();
     void get_oneLight(string light_id);
     void change_lightName(string light_id, string light_name);
@@ -71,6 +73,17 @@ public:
     void change_lightColour(string light_id, string colourCode);//colour from 0 to 65280
     void change_lightBrightness(string light_id, string brightness);//brightness from 0 to 254
 
+    //temp attributes when modifying the bridge
+    void set_tempAdd(string add);
+    string get_tempAdd();
+    void set_tempPort(string port);
+    string get_tempPort();
+    void set_tempUser(string user);
+    string get_tempUser();
+    void set_tempRef(string ref);
+    string get_tempRef();
+
+    //getters and setters
     void set_reference(string the_reference);
     string get_reference();
     void set_userName(string the_name);
@@ -95,6 +108,7 @@ public:
     string get_lightSuccess();
     void set_lightSet(set<string> set);
     string get_lightSet();
+    set<string> get_testSet();
     void set_oneLightContent(string content);
     string get_oneLightContent();
     void set_newLightNameResponse(string response);
@@ -108,6 +122,7 @@ public:
 
 
 private:
+    //HTTP handler
     void handleDefaultResponse(boost::system::error_code err, const Http::Message& response);
     void handleNewUserResponse(boost::system::error_code err, const Http::Message& response);
     void handleModifyResponse(boost::system::error_code err, const Http::Message& response);
@@ -118,6 +133,7 @@ private:
     void handleChangeLightColourResponse(boost::system::error_code err, const Http::Message &response);
     void handleChangeLightBrightnessResponse(boost::system::error_code err, const Http::Message &response);
 
+    //attributes
     set<string> lightSet;
     string newLightNameResponse;
     string newLightTurnResponse;
@@ -137,7 +153,10 @@ private:
     string modifySuccess;
     string lightSuccess;
 
-
+    string tempAdd;
+    string tempPort;
+    string tempUser;
+    string tempRef;
 };
 
 

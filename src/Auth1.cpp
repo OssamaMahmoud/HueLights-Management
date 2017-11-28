@@ -122,7 +122,7 @@ public:
         //group testing WORKS
         //the getstate does not actually get the actions for some reason..
         //but the result is visible in the actial emulator... wierd
-        Bridge *bridge = new Bridge();
+        /*Bridge *bridge = new Bridge();
         bridge->defaultConnect("localhost", "8080","");
         Group *group = new Group();
         group->makeGroup("newdeveloper", "localhost", "8080", "LOOOOOOOOOOOOL", "\"1\"");
@@ -132,20 +132,20 @@ public:
 
         //group->getState("2");
 
-        group->getGroups();
+            group->getGroups();
 
-//        group->addLight("2");
-        //group->getState("2");
-        //group->changeState("false", "0", "30000", "255");
-        //sleep(3);
-        //group->getState("2");
-        //      group->removeLight("1");
-        //group->getState("2");
-        // group->changeState("true", "255", "30000", "255");
+             group->addLight("2");
+        group->getState("2");
+        group->changeState("false", "0", "30000", "255");
+        sleep(3);
+        group->getState("2");
+              group->removeLight("1");
+        group->getState("2");
+         group->changeState("true", "255", "30000", "255");
 
-        //group->deleteGroup();
+        group->deleteGroup();
 
-
+*/
 
         //std::cout << "\n\n\n\n current settings are "
 

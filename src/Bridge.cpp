@@ -17,10 +17,10 @@ Bridge::~Bridge(){
 /************************************* BRIDGE http request ****************************************/
 
 void Bridge::defaultConnect(string the_address, string the_port, string the_reference) {
-    set_address(the_address);
-    set_port(the_port);
-    set_userName("newdeveloper");
-    set_reference(the_reference);
+    set_tempAdd(the_address);
+    set_tempPort(the_port);
+    set_tempUser("newdeveloper");
+    set_tempRef(the_reference);
 
 
     string url = "http://" + the_address + ":" + the_port + "/api/newdeveloper/";
@@ -31,9 +31,6 @@ void Bridge::defaultConnect(string the_address, string the_port, string the_refe
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
     client->done().connect(boost::bind(&Bridge::handleDefaultResponse,this,_1,_2));
-
-    //responseBody = "response body";
-    set_defaultResponse(responseBody);
 
     if(client->get(get_URL())){
         set_success("correct url");
@@ -73,20 +70,12 @@ void Bridge::newUserConnect(string the_address, string the_port, string devicety
     }
 }
 
-bool Bridge::modifyBridge(string address, string port, string username, string reference) {
+void Bridge::modifyBridge(string address, string port, string username, string reference) {
+    set_tempAdd(address);
+    set_tempPort(port);
+    set_tempUser(username);
+    set_tempRef(reference);
     testBridge(address, port, username);
-    string result = get_modifyResponse();
-    if(get_success() != "correct url"){
-        return false;
-    }else{
-        set_userName(username);
-        set_address(address);
-        set_port(port);
-        set_reference(reference);
-        set_URL("http://"+address+":"+port+"/api/newdeveloper/");
-        return true;
-    }
-
 }
 
 void Bridge::testBridge(string the_address, string the_port, string the_username) {
@@ -98,11 +87,11 @@ void Bridge::testBridge(string the_address, string the_port, string the_username
     client->done().connect(boost::bind(&Bridge::handleModifyResponse,this,_1,_2));
 
     if(client->get(url)){
-        set_success("correct url");
+        set_modifySuccess("correct url");
         WApplication::instance()->deferRendering();
     }
     else{
-        set_success("wrong format");
+        set_modifySuccess("wrong format");
         //print an error message to the screen
         cerr << "can't open url" << endl;
     }
@@ -249,8 +238,20 @@ void Bridge::handleDefaultResponse(boost::system::error_code err, const Http::Me
     WApplication::instance()->resumeRendering();
 
     if (!err && response.status() == 200){
-        responseBody = response.body();
+        Json::Object correctJson;
+        Json::parse(response.body(), correctJson);
+//        Json::Object obj = arr[0];
+//        set<string> name = obj.names();
 
+        if(correctJson.contains("lights")){
+            set_success("correct url");
+            set_address(get_tempAdd());
+            set_port(get_tempPort());
+            set_userName(get_tempUser());
+            set_reference(get_tempRef());
+        }else{
+            set_success("wrong url");
+        }
     }
     else {
         set_success("wrong url");
@@ -275,7 +276,21 @@ void Bridge::handleModifyResponse(boost::system::error_code err, const Http::Mes
     WApplication::instance()->resumeRendering();
 
     if (!err && response.status() == 200){
-        set_modifyResponse(response.body());
+        Json::Object correctJson;
+        Json::parse(response.body(), correctJson);
+//        Json::Object obj = arr[0];
+//        set<string> name = obj.names();
+
+        if(correctJson.contains("lights")){
+            set_modifySuccess("correct url");
+            set_userName(get_tempUser());
+            set_address(get_tempAdd());
+            set_port(get_tempPort());
+            set_reference(get_tempRef());
+            set_URL("http://"+get_address()+":"+get_port()+"/api/newdeveloper/");
+        }else {
+            set_success("wrong url");
+        }
     }
     else {
         set_modifySuccess("wrong url");
@@ -290,10 +305,24 @@ void Bridge::handleAllLightsResponse(boost::system::error_code err, const Http::
     WApplication::instance()->resumeRendering();
 
     if(!err && response.status() == 200){
+//        Json::Array arr;
+//        Json::parse(response.body(), arr);
+//        Json::Value dupe = arr;
+//        if(!dupe.isNull()){
+//            Json::Object obj = arr[0];
+//            set<string> name = obj.names();
+//            set<string>::iterator it = name.begin();
+//            string flag = *it;
+//            if(flag == "error"){
+//                set_lightSuccess("wrong url");
+//            }
+//        }else{
         Json::Object content;
         string result = response.body();
         Json::parse(result, content);
         set_lightSet(content.names());
+        set_lightSuccess("correct url");
+        //}
     }
     else{
         set_lightSuccess("wrong url");
@@ -305,6 +334,18 @@ void Bridge::handleOneLightResponse(boost::system::error_code err, const Http::M
     WApplication::instance()->resumeRendering();
 
     if(!err && response.status() == 200){
+//        Json::Array arr;
+//        Json::parse(response.body(), arr);
+//        Json::Value dupe = arr;
+//        if(!dupe.isNull()){
+//            Json::Object obj = arr[0];
+//            set<string> name = obj.names();
+//            set<string>::iterator it = name.begin();
+//            string flag = *it;
+//            if(flag == "error"){
+//                set_lightSuccess("wrong url");
+//            }
+//        }else{
         string name = "the light name: ";
         string brightness = "the brightness: ";
         string colour = "the colour: ";
@@ -326,8 +367,9 @@ void Bridge::handleOneLightResponse(boost::system::error_code err, const Http::M
         brightness = brightness + to_string(bri) + "\n";
         colour = colour + to_string(hue) + "\n";
 
-
         set_oneLightContent(name + brightness + on_off + colour);
+        set_lightSuccess("correct url");
+        //}
     }
     else{
         set_lightSuccess("wrong url");
@@ -336,10 +378,24 @@ void Bridge::handleOneLightResponse(boost::system::error_code err, const Http::M
 }
 
 void Bridge::handleChangeLightNameResponse(boost::system::error_code err, const Http::Message &response){
-    if(!err && response.status() == 200){
-        string content = "result of changing light name: " + response.body();
-        set_newLightNameResponse(content);
+    WApplication::instance()->resumeRendering();
 
+    if(!err && response.status() == 200){
+//        Json::Array arr;
+//        Json::parse(response.body(), arr);
+//        Json::Value dupe = arr;
+//        if(!dupe.isNull()){
+//            Json::Object obj = arr[0];
+//            set<string> name = obj.names();
+//            set<string>::iterator it = name.begin();
+//            string flag = *it;
+//            if(flag == "error"){
+//                set_lightSuccess("wrong url");
+//            }
+//        }else{
+        set_newLightNameResponse(response.body());
+        set_lightSuccess("correct url");
+        //}
     }
     else{
         set_lightSuccess("wrong url");
@@ -348,10 +404,24 @@ void Bridge::handleChangeLightNameResponse(boost::system::error_code err, const 
 }
 
 void Bridge::handleChangeLightTurnResponse(boost::system::error_code err, const Http::Message &response) {
-    if(!err && response.status() == 200){
-        string content = "result of turning the light: " + response.body();
-        set_newLightTurnResponse(content);
+    WApplication::instance()->resumeRendering();
 
+    if(!err && response.status() == 200){
+//        Json::Array arr;
+//        Json::parse(response.body(), arr);
+//        Json::Value dupe = arr;
+//        if(!dupe.isNull()){
+//            Json::Object obj = arr[0];
+//            set<string> name = obj.names();
+//            set<string>::iterator it = name.begin();
+//            string flag = *it;
+//            if(flag == "error"){
+//                set_lightSuccess("wrong url");
+//            }
+//        }else{
+        set_newLightTurnResponse(response.body());
+        set_lightSuccess("correct url");
+        //}
     }
     else{
         set_lightSuccess("wrong url");
@@ -360,10 +430,24 @@ void Bridge::handleChangeLightTurnResponse(boost::system::error_code err, const 
 }
 
 void Bridge::handleChangeLightColourResponse(boost::system::error_code err, const Http::Message &response) {
-    if(!err && response.status() == 200){
-        string content = "result of changing the light colour: " + response.body();
-        set_newLightColourResponse(content);
+    WApplication::instance()->resumeRendering();
 
+    if(!err && response.status() == 200){
+//        Json::Array arr;
+//        Json::parse(response.body(), arr);
+//        Json::Value dupe = arr;
+//        if(!dupe.isNull()){
+//            Json::Object obj = arr[0];
+//            set<string> name = obj.names();
+//            set<string>::iterator it = name.begin();
+//            string flag = *it;
+//            if(flag == "error"){
+//                set_lightSuccess("wrong url");
+//            }
+//        }else{
+        set_newLightColourResponse(response.body());
+        set_lightSuccess("correct url");
+        //}
     }
     else{
         set_lightSuccess("wrong url");
@@ -372,9 +456,13 @@ void Bridge::handleChangeLightColourResponse(boost::system::error_code err, cons
 }
 
 void Bridge::handleChangeLightBrightnessResponse(boost::system::error_code err, const Http::Message &response) {
+    WApplication::instance()->resumeRendering();
+
     if(!err && response.status() == 200){
-        string content = "result of changing the light brightness: " + response.body();
-        set_newLightBrightnessResponse(content);
+
+        set_newLightBrightnessResponse(response.body());
+        set_lightSuccess("correct url");
+        //}
 
     }
     else{
@@ -480,7 +568,12 @@ void Bridge::set_lightSet(set<string> set) {
 string Bridge::get_lightSet() {
     string result = "";
     for (set<string>::iterator it=lightSet.begin(); it!=lightSet.end(); ++it) {
-        result = result + "," + *it;
+        result = result + "\"" + *it + "\"";
+        set<string>::iterator dupe = it;
+        ++dupe;
+        if(dupe!=lightSet.end()){
+            result = result + ", ";
+        }
     }
     return result;
 }
@@ -525,5 +618,39 @@ string Bridge::get_newLightBrightnessResponse() {
     return newLightBrightnessResponse;
 }
 
+void Bridge::set_tempAdd(string add) {
+    tempAdd = add;
+}
 
+string Bridge::get_tempAdd() {
+    return tempAdd;
+}
+
+void Bridge::set_tempPort(string port) {
+    tempPort = port;
+}
+
+string Bridge::get_tempPort() {
+    return tempPort;
+}
+
+void Bridge::set_tempUser(string user) {
+    tempUser = user;
+}
+
+string Bridge::get_tempUser() {
+    return tempUser;
+}
+
+void Bridge::set_tempRef(string ref) {
+    tempRef = ref;
+}
+
+string Bridge::get_tempRef() {
+    return tempRef;
+}
+
+set<string> Bridge::get_testSet() {
+    return lightSet;
+}
 
