@@ -1,8 +1,10 @@
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "AuthWidget.h"
 
 AuthWidget::AuthWidget(Session& session)
         : Wt::Auth::AuthWidget(Session::auth(), session.users(), session.login()),session_(session){
-
+    group = new Group();
 }
 
 
@@ -21,7 +23,6 @@ void AuthWidget::createLoggedInView(){
     address ="";
     port= "";
 
-    //Wt::Auth::AuthWidget::createLoggedInView();
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
 
@@ -79,6 +80,17 @@ void AuthWidget::createLoggedInView(){
     bindWidget("logoutButton", logout);
     bindWidget("header", pageHeader);
     bindWidget("table",choosePage);
+
+    //if from here we got the ip addresses of bridge and port
+    /*
+     * Jimmy- I'm waiting to see where this should go, it has a bad side effect right now
+    user.modify()->setBridgePort("8080");
+    user.modify()->setBridgeIp("localhost");
+
+
+    session_.flush();
+    */
+
 
 
 }
@@ -181,8 +193,16 @@ void AuthWidget::groupPage(){
     dbo::ptr<User> user = session_.user();
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::MainPage);
+
+    cout<<"setting port"<<endl;
+    /*
+    user.modify()->setBridgePort(port);
+    user.modify()->setBridgeIp(address);
+    session_.flush();
+     */
+    cout<<"finished port and ip"<<endl;
     cout<<"WE MADE IT AFTER THE MAIN"<<endl;
-    table_->clear();
+    table_ = new Wt :: WTable();
     Wt :: WText *prompt = new Wt :: WText("                 GROUPS                   ");
     WPushButton *view = new Wt :: WPushButton("View");
     WPushButton *add = new Wt :: WPushButton("Add");
@@ -194,9 +214,73 @@ void AuthWidget::groupPage(){
     table_->elementAt(3,4)->addWidget(add);
     table_->elementAt(3,5)->addWidget(modify);
     table_->elementAt(3,6)->addWidget(del);
-
+    add->clicked().connect(this, &AuthWidget::showGroupAdd);
+    modify->clicked().connect(this, &AuthWidget::showGroupModify);
+    del->clicked().connect(this, &AuthWidget::showGroupDelete);
     bindWidget("back",back);
     bindWidget("header", prompt);
     bindWidget("table", table_);
+/*
+    user.modify()->setBridgePort("8080");
+    user.modify()->setBridgeIp("localhost");
 
+
+
+    group->setPort(user->getBridgePort());
+    group->setAddress(user->getBridgeIp());
+
+    group->getGroups();
+
+
+    string IDs = group->getGroupIdList();//will be empty
+
+    WPushButton *pushNow = new WPushButton("Push twice");
+
+    pushNow->clicked().connect(this, &AuthWidget::pushNowHandler);
+
+    bindWidget("pushNow", pushNow);
+
+    WText *result = new WText("Result");
+    bindWidget("result", result);
+
+    */
+
+}
+void AuthWidget::pushNowHandler() {
+    string ID = group->getGroupIdList();
+    string strRes = "";
+    cout << "the id is:       " << ID << endl;
+    vector<string> idVector;
+    boost::split(idVector, ID, boost::is_any_of(","));
+    for (int i = 0; i < idVector.size(); i++) {
+
+        strRes.append("\nGroup ID: " + idVector[i]);
+
+    }
+}
+
+
+void AuthWidget::showGroupAdd() {
+    cout<<"in modal"<<endl;
+    addDialog_ = new WDialog("Add");
+    addEdit_ = new Wt::WLineEdit(addDialog_->contents());
+    Wt::WPushButton *ok = new Wt::WPushButton("Ok", addDialog_->contents());
+    addEdit_->enterPressed().connect(addDialog_,&Wt::WDialog::accept);
+    ok->clicked().connect(addDialog_,&Wt::WDialog::accept);
+
+    addDialog_->finished().connect(this, &AuthWidget::addDialogDone);
+    addDialog_->show();
+
+}
+void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
+    if(code == Wt::WDialog::Accepted)
+        cout<<("Welcome, "+addEdit_->text())<<endl;
+    delete addDialog_;
+}
+
+void AuthWidget::showGroupModify() {
+    //WDialog modDialog_ = new WDialog("Modify");
+}
+void AuthWidget::showGroupDelete() {
+    //WDialog delDialog_ = new WDialog("Delete");
 }

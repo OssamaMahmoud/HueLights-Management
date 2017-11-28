@@ -7,7 +7,11 @@
 #include "boost/algorithm/string.hpp"
 
 
-Group::Group(std::string username, std::string address, std::string port, std::string name, std::string lights) {
+Group::Group(){};
+
+//makes a god damn group, duhhhhh!
+//to know the id of the group u made keep checking the value of groupId, if empty then wait
+void Group::makeGroup(std::string username, std::string address, std::string port, std::string name, std::string lights) {
 
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups";
     std::cout<< "the URL is:   " << url << std::endl;
@@ -17,7 +21,7 @@ Group::Group(std::string username, std::string address, std::string port, std::s
     client->done().connect(boost::bind(&Group::handleMakeGroup,this,_1,_2));
     //create json to send
     string JSON_string = R"({"lights": [)" +
-                        (lights) + R"(], "name": ")" + name +
+                         (lights) + R"(], "name": ")" + name +
                          R"(", "type": ")" +
                          "LightGroup" + R"("})";
 
@@ -25,33 +29,17 @@ Group::Group(std::string username, std::string address, std::string port, std::s
     body.addBodyText(JSON_string);
 
 
-
-
     if (client->post(url, body)){
         WApplication::instance()->deferRendering();
         //TODO: something i guess
-
-        this->name = name;
-        this->address = address;
-        this->port = port;
-        this->username = username;
-        lightList = lights;
-    }
-
-}
-
-
-std::string Group::vectorToString(vector<std::string> vec){
-    std::string result;
-    for(int i = 0; i <vec.size(); i++){
-
-        result.append(vec[i]);
-        if(i != vec.size() - 1)
-            result.append(", ");
+        this->id = "";
+//        this->name = name;
+//        this->address = address;
+//        this->port = port;
+//        this->username = username;
+//        lightList = lights;
     }
 }
-
-
 
 void Group::handleMakeGroup(boost::system::error_code err, const Http::Message& response) {
     WApplication::instance()->resumeRendering();
@@ -75,15 +63,18 @@ void Group::handleMakeGroup(boost::system::error_code err, const Http::Message& 
     }
 }
 
-int Group::setGroupLights( string newLights) {
 
-    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + this->id;
+
+//takes a string for group id and sets that respective group's lightstring to the light string;
+int Group::setGroupLights(string groupId, string newLights) {
+
+    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId;
     std::cout<< "the URL is:   " << url << std::endl;
 
     Http::Client *client = new Http::Client();
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
-    client->done().connect(boost::bind(&Group::handleUpdateLights,this,_1,_2));
+    client->done().connect(boost::bind(&Group::handleSetLights,this,_1,_2));
 
     string JSON_string = R"({"lights": [)" + (newLights) + R"(])" + R"(})";
 
@@ -91,15 +82,14 @@ int Group::setGroupLights( string newLights) {
     body.addBodyText(JSON_string);
 
     if (client->put(url, body)){
-        //TODO: something i guess
-        this->lightList = newLights;
+        //TODO: something i guess not
+        //this->lightList = newLights;
     }
 
     return 0;
 }
 
-
-void Group::handleUpdateLights(boost::system::error_code err, const Http::Message &response) {
+void Group::handleSetLights(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Array obj;
     Wt::Json::parse(response.body(),obj);
@@ -113,34 +103,40 @@ void Group::handleUpdateLights(boost::system::error_code err, const Http::Messag
 }
 
 
+//TODO:
+//make group add, to become modify light, which will just take the light list and modify it.
 
 
-int Group::addLight(string lightID) {
+//new method to view all the group features
+//name, and all the lights like a double loop
+//make everything static accessed by groupID
+
+//int Group::addLight(string lightID) {
+//
+//    this->lightList.append(", \"" + lightID + "\"");
+//    this->setGroupLights(id, this->lightList);
+//
+//    return 0;
+//}
+//
+//    int Group::removeLight(string lightID) {
+//
+//        //find a way to parse string and remove the god-damn light....
+//        lightID = "\"" + lightID.append("\",");
+//        boost::erase_all(this->lightList, lightID);
+//        lightID = "\"" + lightID.append("\"");
+//
+//        boost::erase_all(this->lightList, lightID);
+//        this->setGroupLights(this->lightList);
+//
+//        return 0;
+//    }
 
 
-    this->lightList.append(", \"" + lightID + "\"");
-    this->setGroupLights(this->lightList);
+//given the group id it can change the state of each of the following, on is a string with value "true" or "false"
+int Group::changeState(string groupId, string on, string bri, string hue, string sat) {
 
-    return 0;
-}
-
-int Group::removeLight(string lightID) {
-
-    //find a way to parse string and remove the god-damn light....
-    lightID = "\"" + lightID.append("\",");
-    boost::erase_all(this->lightList, lightID);
-    lightID = "\"" + lightID.append("\"");
-
-    boost::erase_all(this->lightList, lightID);
-    this->setGroupLights(this->lightList);
-
-    return 0;
-}
-
-
-int Group::changeState(string on, string bri, string hue, string sat) {
-
-    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + this->id + "/action";
+    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId + "/action";
 
     Http::Client *client = new Http::Client();
     client->setTimeout(15);
@@ -148,10 +144,10 @@ int Group::changeState(string on, string bri, string hue, string sat) {
     client->done().connect(boost::bind(&Group::handleChangeState, this,_1,_2));
 
     string JSON_string = R"({"on": ")" + std::string(on) +
-            "\", \"bri\": " + bri +
-            ", \"hue\": " + hue  +
-            ", \"sat\": " + (sat) +
-            R"(})";
+                         "\", \"bri\": " + bri +
+                         ", \"hue\": " + hue  +
+                         ", \"sat\": " + (sat) +
+                         R"(})";
 
     Http::Message body = Http::Message();
     body.addBodyText(JSON_string);
@@ -174,16 +170,17 @@ void Group::handleChangeState(boost::system::error_code err, const Http::Message
     if (!err && response.status() == 200) {
         //get the json from the response and then extract the id from it
         //this->lightList = obj.get("lights");
-        this->getState();
+        //this->getState();
     } else {
         cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
     }
 }
 
 
-int Group::deleteGroup(){
+//deletes a group
+int Group::deleteGroup(string groupId){
 
-    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + this->id ;
+    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
 
     Http::Client *client = new Http::Client();
     client->setTimeout(15);
@@ -193,31 +190,97 @@ int Group::deleteGroup(){
     Http::Message body = Http::Message();
 
     if (client->deleteRequest(url, body)){
-    //TODO: something i guess
+        //TODO: something i guess
     }
 
     return 0;
 }
 
-void Group::getAllGroups(){
+
+
+//gets all the groups in a comma seperated string, keep checking till the groupIdList is not empty
+//like while (empty(this->groupIdList))... wait and then call the get states on each one individually
+void Group::getGroups(){
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups" ;
 
     Http::Client *client = new Http::Client();
     client->setTimeout(15);
     client->setMaximumResponseSize(100*1024);
-    client->done().connect(boost::bind(&Group::handleChangeState, this,_1,_2));
+    client->done().connect(boost::bind(&Group::handleGetGroups, this,_1,_2));
 
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
         //TODO: something i guess
+        //this->allGroupsString = "";
+        this->groupIdList = "";
+
     }
 
     return;
 }
 
 
-std::string Group::getState() {
-    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + this->id ;
+void Group::handleGetGroups(boost::system::error_code err, const Http::Message &response) {
+    WApplication::instance()->resumeRendering();
+    Wt::Json::Object obj;
+    Wt::Json::parse(response.body(),obj);
+
+
+    if (!err && response.status() == 200) {
+        //get the json from the response and then extract the id from it
+
+        set<string> names = obj.names();
+        for( auto id  : names){
+            cout << "please wiork   " << string(id) << endl;
+            //this->getState(string(id));
+
+            this->groupIdList.append(string(id) + ", ");
+        }
+        //remove the last comma
+        this->groupIdList = this->groupIdList.substr(0, groupIdList.length() - 2);
+
+
+        cout << "our final string is for the groups is:  " << this->groupIdList;
+
+    } else {
+        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
+    }
+}
+
+
+//void Group::handleGetAll(boost::system::error_code err, const Http::Message &response) {
+//    WApplication::instance()->resumeRendering();
+//    Wt::Json::Object obj;
+//    Wt::Json::parse(response.body(),obj);
+//
+//    set<string> names = obj.names();
+//
+//    if (!err && response.status() == 200) {
+//        //get the json from the response and then extract the id from it
+//        //this->lightList = obj.get("lights");
+//
+//        //ik ik its an infinte loop, im break from it, cause this is hacky... AND?
+//        for( auto id  : names){
+//            cout << "please wiork   " << string(id) << endl;
+//            this->getState(string(id));
+//            while(!httpMade)
+//                cout<<"sux"<<endl;
+//            this->allGroupsString.append("GroupID: " + string(id) + " ");
+//            httpMade = false;
+//
+//        }
+//        cout << "our final string is for the groups is:  " << this->allGroupsString;
+//
+//    } else {
+//        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
+//    }
+//}
+//
+
+
+//this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
+std::string Group::getState(string groupId) {
+    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
 
     Http::Client *client = new Http::Client();
     client->setTimeout(15);
@@ -227,6 +290,7 @@ std::string Group::getState() {
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
         //TODO: something i guess
+
     }
 
     return "s";
@@ -242,36 +306,37 @@ void Group::handleGetState(boost::system::error_code err, const Http::Message &r
 
     if (!err && response.status() == 200) {
         //get the json from the response and then extract the id from it
-        this->lightList = "";
-        Json::Array lightsArray = obj.get("lights");
+        //this->lightList = "";
+        this->groupState.append(string(obj.get("name").toString()) + ", ");
+        Wt::Json::Array lightsArray = obj.get("lights");
         //for loop go through the  array and make str of it
         for(int i = 0; i < lightsArray.size(); i++){
             if(i == 0)
-                this->lightList.append("\"" + string(lightsArray[i].toString()) + "\"");
+                this->groupState.append("\"" + string(lightsArray[i].toString()) + "\"");
             else
-                this->lightList.append(", \"" + string(lightsArray[i].toString()) + "\"");
+                this->groupState.append(", \"" + string(lightsArray[i].toString()) + "\"");
 
         }
 
-        this->name = "";
-        this->on = "";
-        this->bri = "";
-        this->hue = "";
-
-        this->name.append(obj.get("name").toString());
-
-        if(!obj.get("action").isNull()) {
-            Json::Object action = obj.get("action");
-
-            this->on.append(action.get("on").toString());
-
-            this->bri.append(action.get("bri").toString());
-
-            this->sat = "";
-            this->sat.append(action.get("sat").toString());
-
-            this->hue.append(action.get("hue").toString());
-        }
+//        this->name = "";
+//        this->on = "";
+//        this->bri = "";
+//        this->hue = "";
+//
+//        this->name.append(obj.get("name").toString());
+//
+//        if(!obj.get("action").isNull()) {
+//            Json::Object action = obj.get("action");
+//
+//            this->on.append(action.get("on").toString());
+//
+//            this->bri.append(action.get("bri").toString());
+//
+//            this->sat = "";
+//            this->sat.append(action.get("sat").toString());
+//
+//            this->hue.append(action.get("hue").toString());
+//        }
 
     } else {
         cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
@@ -320,13 +385,40 @@ void Group::setUsername(const string &username) {
     Group::username = username;
 }
 
+void Group::setAddress(const string &address){
+    this->address = address;
+}
+
+std::string Group::vectorToString(vector<std::string> vec){
+    std::string result;
+    for(int i = 0; i <vec.size(); i++){
+
+        result.append(vec[i]);
+        if(i != vec.size() - 1)
+            result.append(", ");
+    }
+}
+
+const string &Group::getAddress() const {
+    return address;
+}
+
+
+
+void Group::setGroupState(const string &groupState) {
+    Group::groupState = groupState;
+}
+
+void Group::setGroupIdList(const string &groupIdList) {
+    Group::groupIdList = groupIdList;
+}
 
 
 //static int Group::testGroup(){
 //
 //    Bridge *bridge = new Bridge();
-    // address = localhost
-    // port what ever
+// address = localhost
+// port what ever
 //    string the_address = bridge->get_address();
 //    string the_port = bridge->get_port();
 //

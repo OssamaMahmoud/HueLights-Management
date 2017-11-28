@@ -7,33 +7,40 @@
 #include <Wt/Auth/AuthWidget>
 #include <Wt/Auth/PasswordService>
 
-
+#include <Wt/WApplication>
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
 #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WText>
+#include <Wt/WFont>
 #include <Wt/WImage>
 #include <Wt/WString>
 #include <Wt/WTable>
 #include <Wt/WTableCell>
-#include <Wt/WMessageBox>
 
 #include "Session.h"
 #include "User.h"
 #include "AuthWidget.h"
-#include "Bridge.h"
 #include "Group.h"
 
+//using namespace Wt;
 
+class AuthApplication : public Wt::WApplication
+{
 
-class AuthApplication : public Wt::WApplication {
 public:
+    AuthApplication(const Wt::WEnvironment& env)
+            : Wt::WApplication(env),
+              session_(appRoot() + "auth.db") {
 
-    AuthApplication(const Wt::WEnvironment& env) : Wt::WApplication(env), session_(appRoot() + "auth.db") {
         setTitle("Hue Lighting");
         Wt :: WApplication :: instance()-> useStyleSheet("css/styleSheet.css");
+
         toHome();
+
+
+
     }
     void toHome() {
 
@@ -117,7 +124,39 @@ public:
 
 
     void toLogin() {
-        setTitle("Team 18: Hue");
+
+
+        //group testing WORKS
+        //the getstate does not actually get the actions for some reason..
+        //but the result is visible in the actial emulator... wierd
+        Bridge *bridge = new Bridge();
+        bridge->defaultConnect("localhost", "8080","");
+        Group *group = new Group();
+        group->makeGroup("newdeveloper", "localhost", "8080", "LOOOOOOOOOOOOL", "\"1\"");
+        std::cout << "\n\n\nthe grup id is:  " << group->getName() << " AND ID IS " << group->getId() <<endl;
+        //sleep(2);
+        group->setId("9");
+
+        //group->getState("2");
+
+        group->getGroups();
+
+//        group->addLight("2");
+        //group->getState("2");
+        //group->changeState("false", "0", "30000", "255");
+        //sleep(3);
+        //group->getState("2");
+        //      group->removeLight("1");
+        //group->getState("2");
+        // group->changeState("true", "255", "30000", "255");
+
+        //group->deleteGroup();
+
+
+
+        //std::cout << "\n\n\n\n current settings are "
+
+        setTitle("Login");
         tableMenu -> clear();
         table_-> clear();
         tableInfo-> clear();
@@ -129,13 +168,16 @@ public:
         }
 
         /* Create and use AuthWidget for authentication */
-       session_.login().changed().connect(this, &AuthApplication::authEvent);
+        session_.login().changed().connect(this, &AuthApplication::authEvent);
+
         root()->addStyleClass("container");
         setTheme(new Wt::WBootstrapTheme(this));
 
 
-        AuthWidget *authWidget = new AuthWidget(session_);
+        AuthWidget *authWidget
+                = new AuthWidget(session_);
         //authWidget->registrationModel();
+
 
         authWidget->model()->addPasswordAuth(&Session::passwordAuth());
         //authWidget->model()->addOAuth(Session::oAuth());
@@ -148,6 +190,7 @@ public:
     }
 
     void toRegister() {
+
         setTitle("Register");
         tableMenu -> clear();
         table_-> clear();
@@ -162,9 +205,9 @@ public:
 
         registerPage-> elementAt(0, 0)->addWidget(registerButton);
 
-        registerButton-> clicked().connect(this, &AuthApplication::toLogin);
+        registerButton-> clicked().connect(this, &AuthApplication :: toLogin);
         fromRegisterPage = true;
-        cout << "we actually get here" <<endl;
+
         homeButton =  new Wt :: WPushButton("Back to Home");
 
         registerPage-> elementAt(0, 0)->addWidget(homeButton);
@@ -172,52 +215,56 @@ public:
 
     }
 
-
-
-    /* Authentication event which initializes new user session */
+    /* Authentication event which initalizes new user session */
     void authEvent() {
         if (session_.login().loggedIn()) {
             const Wt::Auth::User& u = session_.login().user();
+            //redirect to bridge page here
+
             Wt::Dbo::Transaction t(session_);
             dbo::ptr<User> user = session_.user();
             //statusLogged->setText("Logged in as:" + user->getFName() + user->getLName());
 
-            Wt::log("\nNOTICE")<< "firstname " << user->getFName() << " lastname " << user->getLName();
-
+            Wt::log("\nNOTICE")
+                    << "firstname " << user->getFName() << " lastname " << user->getLName();
 
         } else{
             Wt::log("notice") << "User logged out.";
-            Wt::StandardButton logoutScreen = Wt::WMessageBox::show("Logout","<p>You have successfully logged out.</p>",Wt::StandardButton::Ok);
-            //when button is pressed
-            if (logoutScreen == Wt::StandardButton::Ok){
-                //can add stuff
-            }
+
         }
+
     }
 
 private:
     Session session_;
+
     Wt :: WText *statusHome, *statusLogged;
     Wt :: WPushButton *buttonLogin, *buttonReg, *homeButton, *registerButton;
     Wt :: WTable *tableMenu, *table_, *tableInfo, *tableButtons, *registerPage;
+
     bool fromRegisterPage = false;
 
 };
 
-Wt::WApplication *createApplication(const Wt::WEnvironment& env){
+Wt::WApplication *createApplication(const Wt::WEnvironment& env)
+{
     AuthApplication *app = new AuthApplication(env);
     app->messageResourceBundle().use("templates");
     app->messageResourceBundle().use(AuthApplication::appRoot() + "templates");
+
     return app;
 }
 
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+
     try {
         Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
 
         server.addEntryPoint(Wt::Application, createApplication);
+
         Session::configureAuth();
 
         server.run();

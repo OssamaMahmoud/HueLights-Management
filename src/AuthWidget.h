@@ -10,12 +10,14 @@
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Dbo/UserDatabase>
 #include <Wt/WBootstrapTheme>
+#include <Wt/WDialog>
 #include <Wt/WTable>
 #include <Wt/WMessageBox>
-#include "User.h"
+#include "Bridge.h"
+#include "Group.h"
 #include "RegistrationView.h"
 #include "Session.h"
-#include "Bridge.h"
+#include "User.h"
 
  class Session;
 
@@ -29,18 +31,28 @@
 
      private:
          Session& session_;
+
          Bridge bridge_;
          Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
          Wt :: WTable *choosePage,*table_;
          Wt :: WPushButton  *buttonChoose;
          string address, port, reference;
-         bool testBridge = false;
+
+         Group *group;
+         Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
+         WLineEdit *addEdit_;
+     
          void createLoggedInView();
          void MainPage();
          void ConnectToBridge();
          void lightPage();
          void schedulePage();
          void groupPage();
+         void showGroupAdd();
+         void addDialogDone(Wt::WDialog::DialogCode code);
+         void showGroupModify();
+         void showGroupDelete();
+         void pushNowHandler();
  };
 
 
