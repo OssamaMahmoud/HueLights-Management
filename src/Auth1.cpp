@@ -7,18 +7,11 @@
 #include <Wt/Auth/AuthWidget>
 #include <Wt/Auth/PasswordService>
 
-#include <Wt/WApplication>
-#include <Wt/WBreak>
-#include <Wt/WContainerWidget>
+
 #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
-#include <Wt/WText>
-#include <Wt/WFont>
 #include <Wt/WImage>
-#include <Wt/WString>
 #include <Wt/WTable>
-#include <Wt/WTableCell>
-
 #include "Session.h"
 #include "User.h"
 #include "AuthWidget.h"

@@ -370,7 +370,6 @@ void Group::setName(const string &name) {
 }
 
 
-
 const string &Group::getLightList() const {
     return lightList;
 }
