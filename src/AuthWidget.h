@@ -40,7 +40,7 @@
 
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
-         WLineEdit *addName_,*addLights,*delGroupID;
+         WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*hue,*sat;
 
          void createLoggedInView();
          void MainPage();

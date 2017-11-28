@@ -83,17 +83,6 @@ void AuthWidget::createLoggedInView(){
     bindWidget("header", pageHeader);
     bindWidget("table",choosePage);
 
-    //if from here we got the ip addresses of bridge and port
-    /*
-     * Jimmy- I'm waiting to see where this should go, it has a bad side effect right now
-    user.modify()->setBridgePort("8080");
-    user.modify()->setBridgeIp("localhost");
-
-
-    session_.flush();
-    */
-
-
 
 }
 
@@ -269,7 +258,8 @@ void AuthWidget::showGroupAdd() {
     new WText("Name:",addDialog_->contents());
     addName_ = new Wt::WLineEdit(addDialog_->contents());
     new WText("<br />",addDialog_->contents());
-
+    new WText("Have your lights in this format: \"1\",\"2\" ",addDialog_->contents());
+    new WText("<br />",addDialog_->contents());
     //creating the lights text field
     new WText("Lights:",addDialog_->contents());
     addLights = new Wt::WLineEdit(addDialog_->contents());
@@ -288,12 +278,14 @@ void AuthWidget::showGroupAdd() {
 }
 void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
     if(code == Wt::WDialog::Accepted){
-
+        string name,lights;
+        name = addName_->text().toUTF8();
+        lights = addLights->text().toUTF8();
         cout<<("Welcome, "+addName_->text())<<endl;
-        //group->makeGroup("newdeveloper", address,port,)
 
         //if makeGroup returns true
-        if (addName_->text().toUTF8().c_str() != "" && addLights->text().toUTF8().c_str()!="") {
+        if (name!="" && lights!="") {
+            group->makeGroup("newdeveloper", address,port,name,lights);
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully added a group.</p>", Wt::StandardButton::Ok);
         }
@@ -303,7 +295,29 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
 
 
 void AuthWidget::showGroupModify() {
-    //WDialog modDialog_ = new WDialog("Modify");
+    modDialog_ = new WDialog("Modify");
+
+    /*//creating the name text field
+    new WText("groupid:",modDialog_->contents());
+    groupid_ = new Wt::WLineEdit(modDialog_->contents());
+    new WText("<br />",modDialog_->contents());
+
+
+    //creating the lights text field
+    new WText("Lights:",modDialog_->contents());
+    addLights = new Wt::WLineEdit(modDialog_->contents());
+    new WText("<br />",modDialog_->contents());
+
+    //creating the ok button
+    Wt::WPushButton *ok = new Wt::WPushButton("Ok", modDialog_->contents());
+    addName_->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    addLights->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    ok->clicked().connect(modDialog_,&Wt::WDialog::accept);
+
+    //displaying
+    modDialog_->finished().connect(this, &AuthWidget::addDialogDone);
+    modDialog_->show();*/
+
 
 }
 
@@ -316,32 +330,45 @@ void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     delete modDialog_;
 }
 
+//GROUP DELETE DIALOG
+
 void AuthWidget::showGroupDelete() {
+    //setting the tile of the dialog
     delDialog_ = new WDialog("Delete");
 
+    //creating the group id input and setting a mask of 2 digits
     new WText("Group Id:",delDialog_->contents());
     delGroupID = new Wt::WLineEdit(delDialog_->contents());
     delGroupID->setInputMask("09;_");
     new WText("<br />",delDialog_->contents());
 
-    Wt::WPushButton *ok = new Wt::WPushButton("Ok", delDialog_->contents());
+    //creating the ok button and connecting it
+    Wt::WPushButton *del = new Wt::WPushButton("Delete", delDialog_->contents());
     delGroupID->enterPressed().connect(delDialog_,&Wt::WDialog::accept);
-    ok->clicked().connect(delDialog_,&Wt::WDialog::accept);
-
+    del->clicked().connect(delDialog_,&Wt::WDialog::accept);
+    //displaying the dialog and setting the onfinish function
     delDialog_->finished().connect(this, &AuthWidget::delDialogDone);
     delDialog_->show();
 
 }
 
+
 void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
+    //if ok button was pressed
     if(code == Wt::WDialog::Accepted){
         int i;
-        i =group->deleteGroup(delGroupID->text().toUTF8());
-        cout<<"i = "+ i <<endl;
-
-        //if delete group returns 0;
-        Wt::WMessageBox::show("Success!",
-                              "<p>You have successfully deleted group " + delGroupID->text().toUTF8()+".</p>",Wt::StandardButton::Ok);
+        string id = delGroupID->text().toUTF8();
+        if (id !=""){
+            i =group->deleteGroup(id);
+            Wt::WMessageBox::show("Success!",
+                                  "<p>You have successfully deleted group " + delGroupID->text().toUTF8()+".</p>",Wt::StandardButton::Ok);
+        }
+        else {
+            Wt::WMessageBox::show("Error!",
+                                  "<p>Try a valid group-id.</p>", Wt::StandardButton::Ok);
+        }
     }
+
     delete delDialog_;
+    cout<<"dialog deleted"<<endl;
 }

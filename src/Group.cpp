@@ -193,9 +193,10 @@ int Group::deleteGroup(string groupId){
 
     if (client->deleteRequest(url, body)){
     //TODO: something i guess
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 
