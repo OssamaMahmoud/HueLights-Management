@@ -1,14 +1,4 @@
 #include "AuthWidget.h"
-#include "RegistrationView.h"
-#include "Session.h"
-#include "Bridge.h"
-#include <Wt/WMessageBox>
-#include <Wt/WBootstrapTheme>
-#include <Wt/WTable>
-#include <Wt/Auth/AuthModel>
-#include <Wt/Auth/AuthWidget>
-#include <Wt/Auth/PasswordService>
-
 
 AuthWidget::AuthWidget(Session& session)
         : Wt::Auth::AuthWidget(Session::auth(), session.users(), session.login()),session_(session){
@@ -19,10 +9,8 @@ AuthWidget::AuthWidget(Session& session)
 Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     RegistrationView *w = new RegistrationView(session_, this);
     Wt::Auth::RegistrationModel *model = createRegistrationModel();
-
     if (id.isValid())
         model->registerIdentified(id);
-
     w->setModel(model);
     return w;
 }
@@ -125,17 +113,18 @@ void AuthWidget::MainPage(){
 
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::createLoggedInView);
+
     //creating the header for the page
     Wt :: WText *prompt = new Wt :: WText("Navigation");
     WPushButton *lights = new Wt :: WPushButton("Lights");
     WPushButton *groups = new Wt :: WPushButton("Groups");
     WPushButton *schedules = new Wt :: WPushButton("Schedules");
+
     //creating the table to add to the page
-    WTable *table_ = new Wt :: WTable();
+    table_ = new Wt :: WTable();
     table_->elementAt(3,3)->addWidget(lights);
     table_->elementAt(3,4)->addWidget(groups);
     table_->elementAt(3,5)->addWidget(schedules);
-
     lights->clicked().connect(this, &AuthWidget::lightPage);
     groups->clicked().connect(this, &AuthWidget::groupPage);
     schedules->clicked().connect(this, &AuthWidget::schedulePage);
@@ -153,6 +142,8 @@ void AuthWidget::MainPage(){
 void AuthWidget:: lightPage(){
     //yumeng
     setTemplateText(tr("template.loggedinAfterMain"));
+    Wt::Dbo::Transaction t(session_);
+    dbo::ptr<User> user = session_.user();
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::MainPage);
     /*
@@ -160,7 +151,7 @@ void AuthWidget:: lightPage(){
     * TABLE IS EVERYTHING THAT COMES AFTER
 
           add code here
-
+       bindWidget("back",back);
        bindWidget("header", prompt);
        bindWidget("table", table_);
     */
@@ -169,6 +160,8 @@ void AuthWidget:: lightPage(){
 void AuthWidget:: schedulePage(){
     //marlin
     setTemplateText(tr("template.loggedinAfterMain"));
+    Wt::Dbo::Transaction t(session_);
+    dbo::ptr<User> user = session_.user();
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::MainPage);
     /*
@@ -176,24 +169,34 @@ void AuthWidget:: schedulePage(){
      * TABLE IS EVERYTHING THAT COMES AFTER
 
            add code here
-
+        bindWidget("back",back);
         bindWidget("header", prompt);
         bindWidget("table", table_);
      */
 }
 
 void AuthWidget::groupPage(){
-    //jimmy
     setTemplateText(tr("template.loggedinAfterMain"));
+    Wt::Dbo::Transaction t(session_);
+    dbo::ptr<User> user = session_.user();
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::MainPage);
-    /*
-     * PROMPT WILL BE THE FIRST LINE AFTER LOGOUT
-     * TABLE IS EVERYTHING THAT COMES AFTER
+    cout<<"WE MADE IT AFTER THE MAIN"<<endl;
+    table_->clear();
+    Wt :: WText *prompt = new Wt :: WText("                 GROUPS                   ");
+    WPushButton *view = new Wt :: WPushButton("View");
+    WPushButton *add = new Wt :: WPushButton("Add");
+    WPushButton *modify = new Wt :: WPushButton("Modify");
+    WPushButton *del = new Wt :: WPushButton("Delete");
+    //creating the table to add to the page
+    WTable *table_ = new Wt :: WTable();
+    table_->elementAt(3,3)->addWidget(view);
+    table_->elementAt(3,4)->addWidget(add);
+    table_->elementAt(3,5)->addWidget(modify);
+    table_->elementAt(3,6)->addWidget(del);
 
-           add code here
+    bindWidget("back",back);
+    bindWidget("header", prompt);
+    bindWidget("table", table_);
 
-        bindWidget("header", prompt);
-        bindWidget("table", table_);
-     */
 }

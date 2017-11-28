@@ -117,7 +117,7 @@ public:
 
 
     void toLogin() {
-        setTitle("Login");
+        setTitle("Team 18: Hue");
         tableMenu -> clear();
         table_-> clear();
         tableInfo-> clear();
