@@ -10,9 +10,7 @@
                 ${header}
             </div>
             <div >
-
                 ${table}
-
             </div>
 
         </label>
@@ -20,12 +18,10 @@
     <message id="template.loggedinAfterMain">
         <label>
             <div>
-                ${back}${name} ${logoutButton}
+                ${back}${header}${logoutButton}
                 <br />
             </div>
-            <div >
-                ${header}
-            </div>
+
             <div >
 
                 ${table}
