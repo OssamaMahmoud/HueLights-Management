@@ -33,14 +33,16 @@
          Session& session_;
 
          Bridge bridge_;
-         Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
+         WText *result;
+         Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_ ;
          Wt :: WTable *choosePage,*table_;
          Wt :: WPushButton  *buttonChoose;
          string address, port, reference;
 
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
-         WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*hue,*sat;
+         WLineEdit *addName_,*addLights,*delGroupID;
+         WTable *innerTable;
 
          void createLoggedInView();
          void MainPage();
@@ -54,7 +56,9 @@
          void modDialogDone(Wt::WDialog::DialogCode code);
          void showGroupDelete();
          void delDialogDone(Wt::WDialog::DialogCode code);
-         void pushNowHandler();
+         void viewNow();
+         void individualGroupButton(string id);
+         void getGroupsIdHandler();
  };
 
 
