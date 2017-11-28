@@ -90,6 +90,7 @@ int Group::setGroupLights(string groupId, string newLights) {
     return 0;
 }
 
+
 void Group::handleSetLights(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Array obj;

@@ -41,7 +41,7 @@
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
          WLineEdit *addEdit_;
-     
+
          void createLoggedInView();
          void MainPage();
          void ConnectToBridge();
