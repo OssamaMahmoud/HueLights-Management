@@ -17,10 +17,38 @@ class Group {
 
 public:
 
+    Group();
+
     //bunch of functions that call http calls in response to user activity
     //so just do the http calls for now and do the interface after
     //works
-    Group(string username, string address, string port, string name, string lights);
+
+
+    //gets all the groups in a comma separated string, keep checking till the groupIdList is not empty
+    //like while (empty(this->groupIdList))... wait and then call the get states on each one individually
+    void  getGroups();
+
+    //given the group id it can change the state of each of the following, on is a string with value "true" or "false"
+    int changeState(string groupId, string on, string bri, string hue, string sat);
+
+    //this amazing function when given a groupID and a string of lights like " "1", "2", ... "n" " will set the lights to the indiccated in string
+    int setGroupLights(string groupId, string newLights);
+
+    int deleteGroup(string groupId);
+
+    //this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
+    string getState(string groupId);
+
+    string getGroupState(){
+        return groupState;
+    }
+    string getGroupIdList() {
+        return groupIdList;
+    }
+
+
+    //makes a god damn group, duhhhhh!
+    void makeGroup(string username, string address, string port, string name, string lights);
 
     const string &getPort() const;
 
@@ -34,8 +62,6 @@ public:
 
     void setName(const string &name);
 
-    void setState(const string &state);
-
     const string &getLightList() const;
 
     void setLightList(const string &lightList);
@@ -44,54 +70,52 @@ public:
 
     void setUsername(const string &username);
 
+    const string &getAddress() const;
 
-    //add a light by getting the light list and appending a light to it, then using the setGroupAttr to change it
-    //works
-    int addLight(string lightID);
+    void setAddress(const string &address);
 
-    //works
-    int removeLight(string lightID);
+    void setGroupState(const string &groupState);
 
-    //change states not include value if u don't want to change it
-    int changeState(bool on, int bri = -1, int hue = -1, int sat = -1);
+    void setGroupIdList(const string &groupIdList);
 
 
-    int deleteGroup();
 
-    //gets the json of the info as described in the hue api
+//    //add a light by getting the light list and appending a light to it, then using the setGroupAttr to change it
+//    //works
+//    int addLight(string lightID);
+//
+//    //works
+//    int removeLight(string lightID);
+//
+//    //change states not include value if u don't want to change it
 
-    string getAddress();
-
-    string setAddress();
-
-    //does not work
-    void  getAllGroups();
-
-    //works
-    string getState();
-    int changeState(string on, string bri, string hue, string sat);
 
 
 
         private:
-    std::string address, port, id, name, on, bri, sat, hue;
-    std::string lightList, username = "newdeveloper";
+    std::string address, port, id, name;
+    std::string lightList, groupState, groupIdList, username = "newdeveloper";
 
 
     string vectorToString(vector<string> vec);
 
 
+    void handleGetGroups(boost::system::error_code err, const Http::Message &response);
+
+
     void handleMakeGroup(boost::system::error_code err, const Http::Message &response);
 
 
-    void handleUpdateLights(boost::system::error_code err, const Http::Message &response);
 
     void handleChangeState(boost::system::error_code err, const Http::Message &response);
 
-    int setGroupLights(string newLights);
 
 
     void handleGetState(boost::system::error_code err, const Http::Message &response);
+
+
+
+    void handleSetLights(boost::system::error_code err, const Http::Message &response);
 
 };
 

@@ -16,6 +16,7 @@
 #include "RegistrationView.h"
 #include "Session.h"
 #include "Bridge.h"
+#include "Group.h"
 
  class Session;
 
@@ -29,6 +30,7 @@
 
      private:
          Session& session_;
+         Group *group;
          Bridge bridge_;
          Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
          Wt :: WTable *choosePage,*table_;
@@ -41,6 +43,8 @@
          void lightPage();
          void schedulePage();
          void groupPage();
+
+     void pushNowHandler();
  };
 
 
