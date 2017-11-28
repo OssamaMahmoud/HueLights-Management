@@ -27,9 +27,7 @@
 
 
 
-class AuthApplication : public Wt::WApplication
-{
-
+class AuthApplication : public Wt::WApplication {
 public:
 
     AuthApplication(const Wt::WEnvironment& env) : Wt::WApplication(env), session_(appRoot() + "auth.db") {
@@ -119,7 +117,6 @@ public:
 
 
     void toLogin() {
-
         setTitle("Login");
         tableMenu -> clear();
         table_-> clear();
@@ -175,161 +172,52 @@ public:
 
     }
 
+
+
     /* Authentication event which initializes new user session */
     void authEvent() {
         if (session_.login().loggedIn()) {
             const Wt::Auth::User& u = session_.login().user();
-            //redirect to bridge page here
             Wt::Dbo::Transaction t(session_);
             dbo::ptr<User> user = session_.user();
             //statusLogged->setText("Logged in as:" + user->getFName() + user->getLName());
 
-
-           redirect("/bridge");
             Wt::log("\nNOTICE")<< "firstname " << user->getFName() << " lastname " << user->getLName();
 
 
         } else{
             Wt::log("notice") << "User logged out.";
             Wt::StandardButton logoutScreen = Wt::WMessageBox::show("Logout","<p>You have successfully logged out.</p>",Wt::StandardButton::Ok);
-
+            //when button is pressed
             if (logoutScreen == Wt::StandardButton::Ok){
-
+                //can add stuff
             }
-
         }
-
     }
 
 private:
     Session session_;
-
     Wt :: WText *statusHome, *statusLogged;
     Wt :: WPushButton *buttonLogin, *buttonReg, *homeButton, *registerButton;
     Wt :: WTable *tableMenu, *table_, *tableInfo, *tableButtons, *registerPage;
-
     bool fromRegisterPage = false;
 
 };
 
-Wt::WApplication *createApplication(const Wt::WEnvironment& env)
-{
+Wt::WApplication *createApplication(const Wt::WEnvironment& env){
     AuthApplication *app = new AuthApplication(env);
     app->messageResourceBundle().use("templates");
     app->messageResourceBundle().use(AuthApplication::appRoot() + "templates");
-
     return app;
 }
 
 
 
-class MainView : public Wt:: WApplication{
-public:
-    MainView(const Wt::WEnvironment& env);
-private:
-    void toLights();
-    void toGroups();
-    void toSchedules();
-
-};
-
-MainView::MainView(const Wt::WEnvironment& env): Wt::WApplication(env){
-    setTitle("Main Page");
-    root()->addWidget(new WText("Where would you like to go?"));
-    WPushButton *light = new WPushButton("Lights",root());
-    WPushButton *group = new WPushButton("Group",root());
-    WPushButton *schedule = new WPushButton("Schedule",root());
-    light->clicked().connect(this,&MainView::toLights);
-    group->clicked().connect(this,&MainView::toGroups);
-    schedule->clicked().connect(this,&MainView::toSchedules);
-
-}
-void MainView::toLights(){
-    redirect("/lights");
-}
-void MainView::toGroups(){
-    redirect("/groups");
-}
-void MainView::toSchedules(){
-    redirect("/schedule");
-}
-Wt::WApplication *mainView(const Wt::WEnvironment& env){
-    return new MainView(env);
-}
-
-class BridgeView : public Wt::WApplication{
-public:
-    BridgeView(const Wt::WEnvironment& env);
-private:
-
-    void toMain();
-    Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
-    Wt :: WTable *table_, *choosePage;
-    Wt :: WPushButton  *buttonChoose,;
-    bool modify,testBridge = false;
-
-};
-
-BridgeView::BridgeView (const Wt::WEnvironment& env) : Wt::WApplication(env){
-    table_ = new Wt :: WTable(root());
-    Wt :: Orientation orientation1 = Wt :: Vertical;
-    //Wt :: Orientation orientation2 = Wt :: Horizontal;
-
-    table_ = new Wt :: WTable(root());
-    table_-> setWidth(Wt :: WLength("100%"));
-    table_->setHeaderCount(3, orientation1);
-
-    Wt :: WText *pageHeader = new Wt :: WText("This is the light view page");
-    pageHeader-> setStyleClass("rule2");
-
-    table_->elementAt(1, 2)->addWidget(pageHeader);
-    choosePage = new Wt :: WTable(root());
-    choosePage-> setWidth(Wt :: WLength("85%"));
-    //choosePage-> setHeaderCount(11, orientation2);
-
-    Wt :: WText *description1 = new Wt :: WText("The url you want to connect is:");
-    choosePage->elementAt(0,0)->addWidget(description1);
-
-
-    Wt :: WText *description2 = new Wt :: WText("Address: ");
-    bridgeAddress_ = new Wt:: WLineEdit();
-    bridgeAddress_->setPlaceholderText("enter address");
-    choosePage->elementAt(1,0)->addWidget(description2);
-    choosePage->elementAt(1,1)->addWidget(bridgeAddress_);
-
-    Wt :: WText *description3 = new Wt :: WText("Port: ");
-    bridgePort_ = new Wt:: WLineEdit();
-    bridgePort_->setPlaceholderText("enter port");
-    choosePage->elementAt(2,0)->addWidget(description3);
-    choosePage->elementAt(2,1)->addWidget(bridgePort_);
-    Wt :: WText *description4 = new Wt :: WText("Reference:");
-    bridgeReference_ = new Wt:: WLineEdit();
-    bridgeReference_->setPlaceholderText("enter reference");
-    choosePage->elementAt(3,0)->addWidget(description4);
-    choosePage->elementAt(3,1)->addWidget(bridgeReference_);
-
-    buttonChoose = new Wt :: WPushButton("Confirm", root());
-    choosePage->elementAt(4,0)->addWidget(buttonChoose);
-    buttonChoose-> clicked().connect(this, &BridgeView::toMain);
-
-}
-
-void BridgeView::toMain(){
-    redirect("/main");
-}
-
-Wt::WApplication *bridgeView(const Wt::WEnvironment& env){
-    return new BridgeView(env);
-}
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     try {
         Wt::WServer server(argc, argv, WTHTTP_CONFIGURATION);
 
         server.addEntryPoint(Wt::Application, createApplication);
-        server.addEntryPoint(Wt::Application, bridgeView,"/bridge");
-        server.addEntryPoint(Wt::Application, mainView,"/main");
         Session::configureAuth();
 
         server.run();

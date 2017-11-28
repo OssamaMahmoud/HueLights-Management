@@ -5,7 +5,7 @@
 #ifndef AUTH_MYAUTHWIDGET_H
 #define AUTH_MYAUTHWIDGET_H
 
-
+#include <string.h>
 #include <Wt/Auth/AuthWidget>
 #include <Wt/Auth/Dbo/UserDatabase>
 #include "User.h"
@@ -25,8 +25,19 @@
 
  private:
      Session& session_;
-
+     Bridge bridge_;
+     Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
+     Wt :: WTable *choosePage,*table_;
+     Wt :: WPushButton  *buttonChoose;
+     string address, port, reference;
+     bool testBridge = false;
      void createLoggedInView();
+     void MainPage();
+     void ConnectToBridge();
+
+     void lightPage();
+     void schedulePage();
+     void groupPage();
  };
 
 
