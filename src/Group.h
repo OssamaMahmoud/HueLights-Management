@@ -92,7 +92,7 @@ public:
 
 
 
-private:
+        private:
     std::string address, port, id, name;
     std::string lightList, groupState, groupIdList, username = "newdeveloper";
 
@@ -120,4 +120,5 @@ private:
 };
 
 #endif //TEAM18_GROUPWIDGET_H
+
 

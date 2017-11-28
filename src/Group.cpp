@@ -21,7 +21,7 @@ void Group::makeGroup(std::string username, std::string address, std::string por
     client->done().connect(boost::bind(&Group::handleMakeGroup,this,_1,_2));
     //create json to send
     string JSON_string = R"({"lights": [)" +
-                         (lights) + R"(], "name": ")" + name +
+                        (lights) + R"(], "name": ")" + name +
                          R"(", "type": ")" +
                          "LightGroup" + R"("})";
 
@@ -39,6 +39,7 @@ void Group::makeGroup(std::string username, std::string address, std::string por
 //        this->username = username;
 //        lightList = lights;
     }
+
 }
 
 void Group::handleMakeGroup(boost::system::error_code err, const Http::Message& response) {
@@ -144,10 +145,10 @@ int Group::changeState(string groupId, string on, string bri, string hue, string
     client->done().connect(boost::bind(&Group::handleChangeState, this,_1,_2));
 
     string JSON_string = R"({"on": ")" + std::string(on) +
-                         "\", \"bri\": " + bri +
-                         ", \"hue\": " + hue  +
-                         ", \"sat\": " + (sat) +
-                         R"(})";
+            "\", \"bri\": " + bri +
+            ", \"hue\": " + hue  +
+            ", \"sat\": " + (sat) +
+            R"(})";
 
     Http::Message body = Http::Message();
     body.addBodyText(JSON_string);
@@ -190,7 +191,7 @@ int Group::deleteGroup(string groupId){
     Http::Message body = Http::Message();
 
     if (client->deleteRequest(url, body)){
-        //TODO: something i guess
+    //TODO: something i guess
     }
 
     return 0;
@@ -417,8 +418,8 @@ void Group::setGroupIdList(const string &groupIdList) {
 //static int Group::testGroup(){
 //
 //    Bridge *bridge = new Bridge();
-// address = localhost
-// port what ever
+    // address = localhost
+    // port what ever
 //    string the_address = bridge->get_address();
 //    string the_port = bridge->get_port();
 //
@@ -467,3 +468,4 @@ void Group::setGroupIdList(const string &groupIdList) {
 //    }
 //
 //}
+
