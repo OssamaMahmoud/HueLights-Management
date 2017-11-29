@@ -33,7 +33,8 @@
          Session& session_;
 
          Bridge bridge_;
-         Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_;
+
+         Wt :: WLineEdit *bridgeAddress_, *bridgePort_, *bridgeReference_ ;
          Wt :: WTable *choosePage,*table_;
          Wt :: WPushButton  *buttonChoose;
          string address, port, reference;

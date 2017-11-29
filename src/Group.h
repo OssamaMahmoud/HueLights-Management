@@ -39,7 +39,7 @@ public:
     //this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
     string getState(string groupId);
 
-    string & getGroupState(){
+    string getGroupState(){
         return groupState;
     }
     string getGroupIdList() {

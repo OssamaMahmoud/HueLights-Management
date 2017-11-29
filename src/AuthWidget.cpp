@@ -101,10 +101,11 @@ void AuthWidget::ConnectToBridge() {
     address = bridgeAddress_->text().toUTF8();
     port = bridgePort_->text().toUTF8();
     reference = bridgeReference_->text().toUTF8();
-
     user.modify()->setBridgeIp(address);
     user.modify()->setBridgePort(port);
     session_.flush();
+
+    cout << "ip :  " << user->getBridgeIp() << "\n port:  " << user->getBridgePort() << endl;
 
 
     //setting the group's reference to the emulator
@@ -218,8 +219,6 @@ void AuthWidget::groupPage(){
 
 
 
-
-
     //creating the table to add to the page
     table_ = new Wt :: WTable();
     table_->elementAt(3,3)->addWidget(view);
@@ -231,6 +230,8 @@ void AuthWidget::groupPage(){
 
     innerTable = new Wt :: WTable();
     table_->elementAt(5,5)->addWidget(innerTable);
+
+
 
 
     add->clicked().connect(this, &AuthWidget::showGroupAdd);
@@ -252,7 +253,7 @@ void AuthWidget::groupPage(){
     string IDs = group->getGroupIdList();//will be empty
 
 
-   //getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
+    getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
 
     view->clicked().connect(this,&AuthWidget::viewNow);
 
@@ -260,6 +261,14 @@ void AuthWidget::groupPage(){
 
 
 void AuthWidget::viewNow(){
+    string groupSTate = group->getGroupState();
+    WText *display = new WText();
+    display->setText("");
+    innerTable->clear();
+    innerTable->elementAt(1,1)->addWidget(display);
+    cout<<groupSTate<<endl;
+    display->setText(groupSTate);
+
 }
 
 void AuthWidget::individualGroupButton(string id){
@@ -272,7 +281,7 @@ void AuthWidget::getGroupsIdHandler() {
     vector<string> idVector;
     innerTable->clear();
     boost::split(idVector, ID, boost::is_any_of(","));
-    for (int i = 0; i < idVector.size() && !idVector.size() == 0; i++) {
+    for (int i = 0; i < idVector.size() && !idVector.empty(); i++) {
         WPushButton *pushButton = new WPushButton("Get Info group: " + idVector[i]);
         boost::trim(idVector[i]);
         pushButton->clicked().connect( boost::bind(&AuthWidget::individualGroupButton, this, idVector[i] ) );
@@ -280,6 +289,7 @@ void AuthWidget::getGroupsIdHandler() {
         this->innerTable->elementAt(0, i)->addWidget(pushButton);
 
     }
+    group->setGroupIdList("");
 }
 
 
@@ -324,6 +334,8 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
             //prompt the user
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully added a group.</p>", Wt::StandardButton::Ok);
+            group->getGroups();
+
         }
     }
     delete addDialog_;
@@ -454,6 +466,7 @@ void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
             group->getGroups();
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully deleted group " + delGroupID->text().toUTF8()+".</p>",Wt::StandardButton::Ok);
+
         }
         else {
             Wt::WMessageBox::show("Error!",
