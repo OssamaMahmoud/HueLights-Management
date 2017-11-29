@@ -83,7 +83,7 @@ int Group::setGroupLights(string groupId, string newLights) {
     body.addBodyText(JSON_string);
 
     if (client->put(url, body)){
-      //  WApplication::instance()->deferRendering();
+      WApplication::instance()->deferRendering();
 
         //TODO: something i guess not
         //this->lightList = newLights;
@@ -157,7 +157,7 @@ int Group::changeState(string groupId, string on, string bri, string hue, string
     body.addBodyText(JSON_string);
 
     if (client->put(url, body)){
-        //WApplication::instance()->deferRendering();
+        WApplication::instance()->deferRendering();
 
         //TODO: something i guess
 
@@ -196,7 +196,7 @@ int Group::deleteGroup(string groupId){
     Http::Message body = Http::Message();
 
     if (client->deleteRequest(url, body)){
-        //WApplication::instance()->deferRendering();
+        WApplication::instance()->deferRendering();
 
         //TODO: something i guess
         return 0;
@@ -247,6 +247,7 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
 
             this->groupIdList.append(string(id) + ",");
         }
+
         //remove the last comma
         if(groupIdList.size() > 1)
             this->groupIdList = this->groupIdList.substr(0, groupIdList.length() - 1);
@@ -302,7 +303,7 @@ std::string Group::getState(string groupId) {
 
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
-       // WApplication::instance()->deferRendering();
+       WApplication::instance()->deferRendering();
 
         //TODO: something i guess
 
@@ -322,7 +323,7 @@ void Group::handleGetState(boost::system::error_code err, const Http::Message &r
         //get the json from the response and then extract the id from it
         //this->lightList = "";
         this->groupState = "";
-        this->groupState.append(string(obj.get("name").toString()) + ", ");
+        this->groupState.append(string("Name: ") + string(obj.get("name").toString()) + ", Lights: ");
         Wt::Json::Array lightsArray = obj.get("lights");
         //for loop go through the  array and make str of it
         for (int i = 0; i < lightsArray.size(); i++) {
@@ -346,7 +347,7 @@ std::string Group::getAllState(string groupId) {
 
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
-       //WApplication::instance()->deferRendering();
+       WApplication::instance()->deferRendering();
 
         //TODO: something i guess
 

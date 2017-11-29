@@ -19,7 +19,6 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
 }
 
 void AuthWidget::createLoggedInView(){
-    //setting template to logged in
     setTemplateText(tr("template.loggedin"));
     address ="";
     port= "";
@@ -195,80 +194,99 @@ void AuthWidget:: schedulePage(){
 
 void AuthWidget::groupPage(){
     setTemplateText(tr("template.loggedinAfterMain"));
+
+    //get the user info from the session
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
 
+    //create buttons
     WPushButton *back = new Wt :: WPushButton("Back");
     back->clicked().connect(this,&AuthWidget::MainPage);
 
-    table_ = new Wt :: WTable();
-    Wt :: WText *prompt = new Wt :: WText("GROUPS");
+    //create buttons to add to table
+    Wt :: WText *prompt = new Wt :: WText("                 GROUPS                   ");
     WPushButton *view = new Wt :: WPushButton("UpdateView");
     WPushButton *add = new Wt :: WPushButton("Add");
     WPushButton *modify = new Wt :: WPushButton("Modify");
     WPushButton *del = new Wt :: WPushButton("Delete");
-
-    //need this for the get views
     WPushButton *getGroupsId = new Wt :: WPushButton("View Groups");
 
 
     //creating the table to add to the page
     table_ = new Wt :: WTable();
+    //add the buttons
     table_->elementAt(3,3)->addWidget(view);
     table_->elementAt(3,4)->addWidget(add);
     table_->elementAt(3,5)->addWidget(modify);
     table_->elementAt(3,6)->addWidget(del);
-
     table_->elementAt(4,3)->addWidget(getGroupsId);
-    innerTable = new Wt :: WTable();
-    table_->elementAt(5,5)->addWidget(innerTable);
 
+    //create innertable and addd to main table
+    //used for the view
+    displayTable = new Wt :: WTable();
+    table_->elementAt(5,5)->addWidget(displayTable);
+
+
+
+
+    //bind each button to its method
     add->clicked().connect(this, &AuthWidget::showGroupAdd);
     modify->clicked().connect(this, &AuthWidget::showGroupModify);
     del->clicked().connect(this, &AuthWidget::showGroupDelete);
+    getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
+    view->clicked().connect(this,&AuthWidget::viewNow);
+
+    //bind the views to there respective areas in the template
     bindWidget("back",back);
     bindWidget("header", prompt);
     bindWidget("table", table_);
 
+
+    //get the port/address from the db
     group->setPort(user->getBridgePort());
     group->setAddress(user->getBridgeIp());
 
+    //get the groupID list
     group->getGroups();
-    string IDs = group->getGroupIdList();//will be empty
-    getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
-    view->clicked().connect(this,&AuthWidget::viewNow);
 
 }
 
-
+/*
+ * onclick for the view button
+ * displays the information brought from the json into the display table
+ */
 void AuthWidget::viewNow(){
-    string groupSTate = group->getGroupState();
+    //get the state string from the previous call to the emulator
+    string groupState = group->getGroupState();
+    //display it in the display inner table
     WText *display = new WText();
     display->setText("");
-    innerTable->clear();
-    innerTable->elementAt(1,1)->addWidget(display);
-    display->setText(groupSTate);
+    displayTable->clear();
+    displayTable->elementAt(1,1)->addWidget(display);
+    cout<<groupState<<endl;
+    display->setText(groupState);
 
 }
 
 void AuthWidget::individualGroupButton(string id){
+    //get the state of the group specified by the id
     group->getState(id);
 }
 
 void AuthWidget::getGroupsIdHandler() {
     string ID = group->getGroupIdList();
+    cout << "the id is:       " << ID << endl;
     vector<string> idVector;
-    innerTable->clear();
+    displayTable->clear();
     boost::split(idVector, ID, boost::is_any_of(","));
     for (int i = 0; i < idVector.size() && !idVector.empty(); i++) {
         WPushButton *pushButton = new WPushButton("Get Info group: " + idVector[i]);
         boost::trim(idVector[i]);
         pushButton->clicked().connect( boost::bind(&AuthWidget::individualGroupButton, this, idVector[i] ) );
         //table_->hide();
-        this->innerTable->elementAt(0, i)->addWidget(pushButton);
+        this->displayTable->elementAt(0, i)->addWidget(pushButton);
 
     }
-    group->setGroupIdList("");
 }
 
 
@@ -310,10 +328,11 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
         if (name.compare("")!=0 && lights.compare("")!=0) {
             //create a group for the user
             group->makeGroup("newdeveloper", address,port,name,lights);
+            group->getGroups();
+
             //prompt the user
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully added a group.</p>", Wt::StandardButton::Ok);
-            group->getGroups();
 
         }
     }
