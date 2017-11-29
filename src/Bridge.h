@@ -22,6 +22,15 @@
 
 #include "User.h"
 
+
+/*
+ * Bridge class:
+ *
+ * main function1: connect to hue bridge, test the url is correct or not
+ *
+ * main function2: view lights, view one specified light, and change light attributes
+ */
+
 using namespace Wt;
 using namespace std;
 namespace dbo = Wt::Dbo;
@@ -44,14 +53,6 @@ public:
     }
 
 
-    /*
-     * user optionally give an user name other than "newdeveloper"
-     * not required by the project
-     * and DO NOT use it
-     *
-     */
-    void newUserConnect(string address, string port, string devicetype, string username, string reference);
-
     /* use defualt user name to connect bridge */
     void defaultConnect(string address, string port, string reference);
     /*
@@ -66,7 +67,9 @@ public:
      */
     void testBridge(string address, string port, string username);
 
-    //functions for light
+    /*
+     * functions for light
+     */
     void get_allLights();
     void get_oneLight(string light_id);
     void change_lightName(string light_id, string light_name);
@@ -74,7 +77,10 @@ public:
     void change_lightColour(string light_id, string colourCode);//colour from 0 to 65280
     void change_lightBrightness(string light_id, string brightness);//brightness from 0 to 254
 
-    //temp attributes when modifying the bridge
+    /*
+     * temp attributes when modifying the bridge
+     * store to temp, check if correct, then store into URL, port, username, and reference
+     */
     void set_tempAdd(string add);
     string get_tempAdd();
     void set_tempPort(string port);
@@ -84,48 +90,51 @@ public:
     void set_tempRef(string ref);
     string get_tempRef();
 
-    //getters and setters
+    /*
+     * getters and setters
+     */
     void set_reference(string the_reference);
-    string get_reference();
+    string get_reference(); //the reference of a bridge
     void set_userName(string the_name);
-    string get_userName();
+    string get_userName(); //the username
     void set_address(string the_address);
-    string get_address();
+    string get_address(); //the ip address
     void set_port(string the_port);
-    string get_port();
+    string get_port(); //the port number
     void set_defaultResponse(string response);
-    string get_defaultResponse();
+    string get_defaultResponse(); //the response after connecting to the hue bridge (e.g. "http://localhost:80/api/newdeveloper/")
     void set_newUserResponse(string response);
-    string get_newUserResponse();
+    string get_newUserResponse(); // the response after creating new bridge username other than "newdeveloper"(this is not used...)
     void set_modifyResponse(string response);
-    string get_modifyResponse();
+    string get_modifyResponse(); // the response after modifying the bridge
     void set_URL(string the_url);
-    string get_URL();
+    string get_URL(); //the URL of the bridge
     void set_success(string flag);
-    string get_success();
+    string get_success(); //whether the url is correct to connect to hue bridge is indicated here
     void set_modifySuccess(string flag);
-    string get_modifySuccess();
+    string get_modifySuccess(); //whether the url is correct to modify the hue bridge is indicated here
     void set_lightSuccess(string flag);
-    string get_lightSuccess();
+    string get_lightSuccess(); //whether the url is correct to do things with lights is indicated here
     void set_lightSet(set<string> set);
-    string get_lightSet();
-    set<string> get_testSet();
+    string get_lightSet(); //all the lights in the bridge
+    set<string> get_testSet(); //all the set of strings of light id
     void set_oneLightContent(string content);
-    string get_oneLightContent();
+    string get_oneLightContent(); //the content of one specified light
     void set_newLightNameResponse(string response);
-    string get_newLightNameResponse();
+    string get_newLightNameResponse(); // response after changing the light name
     void set_newLightTurnResponse(string response);
-    string get_newLightTurnResponse();
+    string get_newLightTurnResponse(); // response after truning on or off the light
     void set_newLightColourResponse(string response);
-    string get_newLightColourResponse();
+    string get_newLightColourResponse(); // response after changing the light colour
     void set_newLightBrightnessResponse(string response);
-    string get_newLightBrightnessResponse();
+    string get_newLightBrightnessResponse(); // response after changing the light brightness
 
 
 private:
-    //HTTP handler
+    /*
+     * HTTP handler
+     */
     void handleDefaultResponse(boost::system::error_code err, const Http::Message& response);
-    void handleNewUserResponse(boost::system::error_code err, const Http::Message& response);
     void handleModifyResponse(boost::system::error_code err, const Http::Message& response);
     void handleAllLightsResponse(boost::system::error_code err, const Http::Message &response);
     void handleOneLightResponse(boost::system::error_code err, const Http::Message &response);
@@ -134,7 +143,9 @@ private:
     void handleChangeLightColourResponse(boost::system::error_code err, const Http::Message &response);
     void handleChangeLightBrightnessResponse(boost::system::error_code err, const Http::Message &response);
 
-    //attributes
+    /*
+     * attributes
+     */
     set<string> lightSet;
     string newLightNameResponse;
     string newLightTurnResponse;
@@ -154,6 +165,9 @@ private:
     string modifySuccess;
     string lightSuccess;
 
+    /*
+     * temporary storage of address, port, username, and reference
+     */
     string tempAdd;
     string tempPort;
     string tempUser;
