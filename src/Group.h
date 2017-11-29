@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 11/21/17.
-//
+
 
 #ifndef TEAM18_GROUPWIDGET_H
 #define TEAM18_GROUPWIDGET_H
@@ -10,13 +8,21 @@
 #include <vector>
 #include "Session.h"
 
-//TODO change to just group, and implement it properly with id as value
-//and get all groups can be put in the view
 
+/*
+ * @brief creates, deletes, changesstate and getstate of a group in a bridge
+ * @author Ossama
+ *
+ */
 class Group {
 
 public:
 
+    /*
+     * @brief constructor for group
+     * @params
+     * @returns
+     */
     Group();
 
     //bunch of functions that call http calls in response to user activity
@@ -24,31 +30,54 @@ public:
     //works
 
 
-    //gets all the groups in a comma separated string, keep checking till the groupIdList is not empty
-    //like while (empty(this->groupIdList))... wait and then call the get states on each one individually
+    /*
+     * @brief gets all the groups in a comma separated string and sets the groupLightID string
+     * @params
+     * @returns
+     */
     void  getGroups();
 
-    //given the group id it can change the state of each of the following, on is a string with value "true" or "false"
+    /*
+     * @brief change the state of the group,
+     * @params string groupid of group, string on to indicate "true/false" for light state, string sat, string hue
+     * @returns int
+     */
     int changeState(string groupId, string on, string bri, string hue, string sat);
 
-    //this amazing function when given a groupID and a string of lights like " "1", "2", ... "n" " will set the lights to the indiccated in string
+    /*
+    * @brief set the lights to the indiccated in string
+    * @params groupID and a string of lights like "1", "2", ... "n"
+    * @returns int success
+    */
     int setGroupLights(string groupId, string newLights);
 
+    /*
+     * @brief deletes the group
+     * @params groupid of group to be deleted
+     * @returns success
+     */
     int deleteGroup(string groupId);
 
-    //this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
+    //this beautiful function when given a groupID returns
+    /*
+     * @brief sets var groupstate to the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
+     * @params group id in question
+     * @returns success string
+     */
     string getState(string groupId);
 
-    string getGroupState(){
-        return groupState;
-    }
-    string getGroupIdList() {
-        return groupIdList;
-    }
-
-
-    //makes a god damn group, duhhhhh!
+    /*
+    * @brief makes a group using the http call
+    * @params username of user, address of bridge, port of bridge, name of group, list of lights as a string
+    * @returns
+    */
     void makeGroup(string username, string address, string port, string name, string lights);
+
+
+    //GETTERS AND SETTERS
+    string getGroupState();
+
+    string getGroupIdList();
 
     const string &getPort() const;
 

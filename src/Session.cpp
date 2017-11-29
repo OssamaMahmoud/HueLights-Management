@@ -38,8 +38,8 @@ void Session::configureAuth()
     Wt::Auth::PasswordVerifier *verifier = new Wt::Auth::PasswordVerifier();
     verifier->addHashFunction(new Wt::Auth::BCryptHashFunction(7));
     myPasswordService.setVerifier(verifier);
-    myPasswordService.setAttemptThrottlingEnabled(false);
-    //myPasswordService.setStrengthValidator(new Wt::Auth::PasswordStrengthValidator());
+    myPasswordService.setAttemptThrottlingEnabled(true);
+    myPasswordService.setStrengthValidator(new Wt::Auth::PasswordStrengthValidator());
 
     if (Wt::Auth::GoogleService::configured())
         myOAuthServices.push_back(new Wt::Auth::GoogleService(myAuthService));

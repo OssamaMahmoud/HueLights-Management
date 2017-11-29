@@ -74,6 +74,8 @@
          void toTurn();
          void toChangeBrightness();
          void toResult();
+
+     void helpFunction();
  };
 
 

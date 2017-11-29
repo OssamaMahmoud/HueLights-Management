@@ -10,6 +10,11 @@
 
 class Session;
 
+/*
+ * @brief creates the usermodel needed for registration
+ * @author Ossama
+ *
+ */
 class UserDetailsModel : public Wt::WFormModel
 {
 public:

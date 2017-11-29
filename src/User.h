@@ -13,7 +13,11 @@ class User;
 typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
 using namespace std;
 
-
+/*
+ * @brief User class which represents the users info
+ * @author Ossama
+ *
+ */
 class User {
 private:
     std::string fName;
@@ -27,10 +31,6 @@ public:
 
     void setLName(const std::string &lName);
 
-    //const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &getBridgeList() const;
-
-    //void setBridgeList(const Wt::Dbo::collection<Wt::Dbo::ptr<Bridge>> &bridgeList);
-
     const std::string &getFName() const;
 
     const std::string &getLName() const;
@@ -43,11 +43,7 @@ public:
 
 
 
-    //add bridges list here
-
-
-    /* You probably want to add other user information here */
-
+    //persistance to db
     template<class Action>
     void persist(Action& a) {
         dbo::field(a, fName, "fName");

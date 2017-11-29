@@ -35,6 +35,7 @@ void AuthWidget::createLoggedInView(){
 
     table_ = new Wt :: WTable();
     table_-> setWidth(Wt :: WLength("100%"));
+
     table_->setHeaderCount(3, orientation1);
 
     WText *pageHeader = new WText("This is the bridge view page");
@@ -140,22 +141,40 @@ void AuthWidget::MainPage(){
     WPushButton *lights = new Wt :: WPushButton("Lights");
     WPushButton *groups = new Wt :: WPushButton("Groups");
     WPushButton *schedules = new Wt :: WPushButton("Schedules");
+    WPushButton *help = new Wt :: WPushButton("Help");
+
 
     //creating the table to add to the page
     table_ = new Wt :: WTable();
-    table_-> setWidth(Wt :: WLength("100%"));
+    //table_-> setWidth(Wt :: WLength("100%"));
+
     table_->elementAt(3,3)->addWidget(lights);
     table_->elementAt(3,4)->addWidget(groups);
     table_->elementAt(3,5)->addWidget(schedules);
+    table_->elementAt(4,3)->addWidget(help);
     //connect the buttons to the pages
     lights->clicked().connect(this, &AuthWidget::lightPage);
     groups->clicked().connect(this, &AuthWidget::groupPage);
     schedules->clicked().connect(this, &AuthWidget::schedulePage);
+    help->clicked().connect(this, &AuthWidget::helpFunction);
     //adding to the page
     bindWidget("back",back);
     bindWidget("header", prompt);
     bindWidget("table", table_);
 }
+
+    void AuthWidget::helpFunction(){
+        WText *helpText = new WText();
+        helpText->setText("Welcome to the Main Page: <br/> Select one of the buttons above to go to the:"
+                                  "<br/>Lights page where you can view your lights and change there state"
+                                  "<br/>Groups page where you can view all your groups and whats in them, "
+                                  "<br/> create new groups of lights and delete groups"
+                                  "<br/>Schedules page where you can create schedules for your "
+                                  "<br/> lights or groups and even delete them"
+                                  "<br/>Thank you for visting :) :) :) :) :) :) :) :)"
+        );
+        table_->elementAt(5,5)->addWidget(helpText);
+    }
 
 
 
@@ -185,7 +204,8 @@ void AuthWidget:: lightPage(){
 
     /* Add the description to a table */
     table_ = new Wt :: WTable();
-    table_-> setWidth(Wt :: WLength("100%"));
+
+
     table_ -> setHeaderCount(11, orientation2);
 
     table_->elementAt(1, 0)->addWidget(description1);
@@ -596,6 +616,7 @@ void AuthWidget::groupPage(){
 
     //creating the table to add to the page
     table_ = new Wt :: WTable();
+
     //add the buttons
     table_->elementAt(3,3)->addWidget(view);
     table_->elementAt(3,4)->addWidget(add);
@@ -606,7 +627,7 @@ void AuthWidget::groupPage(){
     //create innertable and addd to main table
     //used for the view
     displayTable = new Wt :: WTable();
-    table_->elementAt(5,5)->addWidget(displayTable);
+    table_->elementAt(5,7)->addWidget(displayTable);
 
 
 
@@ -644,7 +665,7 @@ void AuthWidget::viewNow(){
     WText *display = new WText();
     display->setText("");
     displayTable->clear();
-    displayTable->elementAt(1,1)->addWidget(display);
+    displayTable->elementAt(0,0)->addWidget(display);
     cout<<groupState<<endl;
     display->setText(groupState);
 
@@ -780,7 +801,6 @@ void AuthWidget::showGroupModify() {
 
 
 }
-
 
 void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     string newid,newOn, newBri, newHue,newSat,newLight;

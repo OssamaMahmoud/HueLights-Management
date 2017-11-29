@@ -361,3 +361,10 @@ void Group::setGroupState(const string &groupState) {
 void Group::setGroupIdList(const string &groupIdList) {
     Group::groupIdList = groupIdList;
 }
+
+string Group::getGroupState(){
+    return groupState;
+}
+string Group::getGroupIdList() {
+    return groupIdList;
+}

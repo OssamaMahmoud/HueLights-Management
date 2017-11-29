@@ -19,7 +19,11 @@ namespace dbo = Wt::Dbo;
 
 typedef Wt::Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
 
-
+/*
+ * @brief manages the session of the user
+ * @author Ossama
+ *
+ */
 class Session : public dbo::Session
 
 {

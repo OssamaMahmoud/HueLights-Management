@@ -11,6 +11,11 @@
 class Session;
 class UserDetailsModel;
 
+/*
+ * @brief creates the registrantion view by overriding the parents view
+ * @author Ossama
+ *
+ */
 class RegistrationView : public Wt::Auth::RegistrationWidget
 {
 public:
