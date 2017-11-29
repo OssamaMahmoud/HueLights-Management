@@ -53,7 +53,7 @@ public:
         dbo::field(a, fName, "fName");
         dbo::field(a, lName, "lName");
         dbo::field(a, bridgeIp, "bridgeIp");
-        dbo::field(a, bridgeIp, "bridgePort");
+        dbo::field(a, bridgePort, "bridgePort");
 
         dbo::hasOne(a, authInfo, "user");
     }

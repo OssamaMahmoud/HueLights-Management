@@ -39,18 +39,17 @@
          Wt :: WPushButton  *buttonChoose;
          string address, port, reference;
 
-
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
          WTable *displayTable;
          WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*bri,*hue,*sat,*modLights;
+     bool getAll, secondaryPage1,secondaryPage2,secondaryPage3,secondaryPage4,secondaryPage5,secondaryPage6 = false;
+     Wt :: WPushButton  *buttonAllLight, *buttonOneLight, *buttonRename, *buttonColor, *buttonTurn, *buttonBrightness;
+     Wt :: WLineEdit *lightIdEdit_, *lightIdName_, *renameEdit_, *lightIdColor_, *colorEdit_, *switchId_, *onOrOff_, *lightIdBrightness_, *brightnessEdit_;
+     Wt :: WPushButton *buttonWait1, *buttonWait2, *lightButton, *buttonResult;
 
-         bool getAll, secondaryPage1,secondaryPage2,secondaryPage3,secondaryPage4,secondaryPage5,secondaryPage6 = false;
-         Wt :: WPushButton  *buttonAllLight, *buttonOneLight, *buttonRename, *buttonColor, *buttonTurn, *buttonBrightness;
-         Wt :: WLineEdit *lightIdEdit_, *lightIdName_, *renameEdit_, *lightIdColor_, *colorEdit_, *switchId_, *onOrOff_, *lightIdBrightness_, *brightnessEdit_;
-         Wt :: WPushButton *buttonWait1, *buttonWait2, *lightButton, *buttonResult;
 
-         void createLoggedInView();
+     void createLoggedInView();
          void MainPage();
          void ConnectToBridge();
          void lightPage();
@@ -65,6 +64,7 @@
          void viewNow();
          void individualGroupButton(string id);
          void getGroupsIdHandler();
+
          void toWaitPage1();
          void toWaitPage2();
          void toGetAllLight();

@@ -79,7 +79,7 @@ public:
     void setGroupIdList(const string &groupIdList);
 
 
-private:
+        private:
     std::string address, port, id, name;
     std::string lightList, groupState, groupIdList, username = "newdeveloper";
 
@@ -103,6 +103,11 @@ private:
 
     void handleSetLights(boost::system::error_code err, const Http::Message &response);
 
+    string getAllState(string groupId);
+
+    void handleAllGetState(boost::system::error_code err, const Http::Message &response);
 };
 
 #endif //TEAM18_GROUPWIDGET_H
+
+

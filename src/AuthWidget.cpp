@@ -18,15 +18,10 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     return w;
 }
 
-
-
-
-
 void AuthWidget::createLoggedInView(){
     setTemplateText(tr("template.loggedin"));
     address ="";
     port= "";
-
 
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
@@ -34,10 +29,6 @@ void AuthWidget::createLoggedInView(){
     //this is where u can add a widget
     WPushButton *logout = new WPushButton("LOGOUT");
     WText *name = new WText("Hello "  + user->getFName() + "!");
-
-
-
-
 
     Wt :: Orientation orientation1 = Wt :: Vertical;
     //Wt :: Orientation orientation2 = Wt :: Horizontal;
@@ -104,6 +95,8 @@ void AuthWidget::createLoggedInView(){
 void AuthWidget::ConnectToBridge() {
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
+    cout << "ip :  " << user->getBridgeIp() << "\n port:  " << user->getBridgePort() << endl;
+
     //saving the input from the user as a c-string
 
     address = bridgeAddress_->text().toUTF8();
@@ -148,7 +141,6 @@ void AuthWidget::MainPage(){
     WPushButton *groups = new Wt :: WPushButton("Groups");
     WPushButton *schedules = new Wt :: WPushButton("Schedules");
 
-
     //creating the table to add to the page
     table_ = new Wt :: WTable();
     table_-> setWidth(Wt :: WLength("100%"));
@@ -159,8 +151,6 @@ void AuthWidget::MainPage(){
     lights->clicked().connect(this, &AuthWidget::lightPage);
     groups->clicked().connect(this, &AuthWidget::groupPage);
     schedules->clicked().connect(this, &AuthWidget::schedulePage);
-
-
     //adding to the page
     bindWidget("back",back);
     bindWidget("header", prompt);
@@ -548,7 +538,7 @@ void AuthWidget :: toResult(){
             }else{
                 Wt :: WText *errorDescription = new Wt :: WText("no such brightness");
                 table_->elementAt(1,0)->addWidget(errorDescription);
-        }
+            }
         }else{
             Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
             Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
@@ -563,6 +553,7 @@ void AuthWidget :: toResult(){
     table_->elementAt(2,0)->addWidget(lightButton);
     lightButton-> clicked().connect(this, &AuthWidget :: lightPage);
 }
+
 
 
 void AuthWidget:: schedulePage(){
@@ -670,7 +661,7 @@ void AuthWidget::getGroupsIdHandler() {
     vector<string> idVector;
     displayTable->clear();
     boost::split(idVector, ID, boost::is_any_of(","));
-    for (int i = 0; i < idVector.size() && !idVector.empty(); i++) {
+    for (int i = 0; i < idVector.size() && ID != ""; i++) {
         WPushButton *pushButton = new WPushButton("Get Info group: " + idVector[i]);
         boost::trim(idVector[i]);
         pushButton->clicked().connect( boost::bind(&AuthWidget::individualGroupButton, this, idVector[i] ) );
