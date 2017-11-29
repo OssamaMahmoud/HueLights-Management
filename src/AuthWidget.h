@@ -42,7 +42,7 @@
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
          WTable *innerTable;
-         WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*bri,*hue,*sat,*modLights,*modName;
+         WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*bri,*hue,*sat,*modLights;
 
          void createLoggedInView();
          void MainPage();
