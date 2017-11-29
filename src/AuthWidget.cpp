@@ -19,10 +19,10 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
 }
 
 void AuthWidget::createLoggedInView(){
+    //setting template to logged in
     setTemplateText(tr("template.loggedin"));
     address ="";
     port= "";
-
 
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
@@ -105,8 +105,6 @@ void AuthWidget::ConnectToBridge() {
     user.modify()->setBridgePort(port);
     session_.flush();
 
-    cout << "ip :  " << user->getBridgeIp() << "\n port:  " << user->getBridgePort() << endl;
-
 
     //setting the group's reference to the emulator
     group->setPort(port);
@@ -157,11 +155,7 @@ void AuthWidget::MainPage(){
     bindWidget("header", prompt);
     bindWidget("table", table_);
 }
-/*
- *  IMPORTANT!!!!!!!!!!!!!
- *  MAKE SURE YOUR CMAKE TEMPLATE HAS THE message id=template.logginednAfterMain view
- *
- */
+
 
 void AuthWidget:: lightPage(){
     //yumeng
@@ -208,7 +202,7 @@ void AuthWidget::groupPage(){
     back->clicked().connect(this,&AuthWidget::MainPage);
 
     table_ = new Wt :: WTable();
-    Wt :: WText *prompt = new Wt :: WText("                 GROUPS                   ");
+    Wt :: WText *prompt = new Wt :: WText("GROUPS");
     WPushButton *view = new Wt :: WPushButton("UpdateView");
     WPushButton *add = new Wt :: WPushButton("Add");
     WPushButton *modify = new Wt :: WPushButton("Modify");
@@ -216,7 +210,6 @@ void AuthWidget::groupPage(){
 
     //need this for the get views
     WPushButton *getGroupsId = new Wt :: WPushButton("View Groups");
-
 
 
     //creating the table to add to the page
@@ -227,12 +220,8 @@ void AuthWidget::groupPage(){
     table_->elementAt(3,6)->addWidget(del);
 
     table_->elementAt(4,3)->addWidget(getGroupsId);
-
     innerTable = new Wt :: WTable();
     table_->elementAt(5,5)->addWidget(innerTable);
-
-
-
 
     add->clicked().connect(this, &AuthWidget::showGroupAdd);
     modify->clicked().connect(this, &AuthWidget::showGroupModify);
@@ -241,20 +230,12 @@ void AuthWidget::groupPage(){
     bindWidget("header", prompt);
     bindWidget("table", table_);
 
-
-
     group->setPort(user->getBridgePort());
     group->setAddress(user->getBridgeIp());
 
-
     group->getGroups();
-
-
     string IDs = group->getGroupIdList();//will be empty
-
-
     getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
-
     view->clicked().connect(this,&AuthWidget::viewNow);
 
 }
@@ -266,7 +247,6 @@ void AuthWidget::viewNow(){
     display->setText("");
     innerTable->clear();
     innerTable->elementAt(1,1)->addWidget(display);
-    cout<<groupSTate<<endl;
     display->setText(groupSTate);
 
 }
@@ -277,7 +257,6 @@ void AuthWidget::individualGroupButton(string id){
 
 void AuthWidget::getGroupsIdHandler() {
     string ID = group->getGroupIdList();
-    cout << "the id is:       " << ID << endl;
     vector<string> idVector;
     innerTable->clear();
     boost::split(idVector, ID, boost::is_any_of(","));
@@ -323,9 +302,9 @@ void AuthWidget::showGroupAdd() {
 void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
     if(code == Wt::WDialog::Accepted){
         string name,lights;
+        //getting the text from the WLineEdit
         name = addName_->text().toUTF8();
         lights = addLights->text().toUTF8();
-        cout<<("Welcome, "+addName_->text())<<endl;
 
         //if makeGroup returns true
         if (name.compare("")!=0 && lights.compare("")!=0) {
@@ -457,11 +436,10 @@ void AuthWidget::showGroupDelete() {
 void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
     //if ok button was pressed
     if(code == Wt::WDialog::Accepted){
-        int i;
         string id = delGroupID->text().toUTF8();
         //delete the group and prompt user
         if (id !=""){
-            i =group->deleteGroup(id);
+            group->deleteGroup(id);
             group->getGroups();
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully deleted group " + delGroupID->text().toUTF8()+".</p>",Wt::StandardButton::Ok);
