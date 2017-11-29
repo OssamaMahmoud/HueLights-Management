@@ -425,8 +425,7 @@ void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
         if(newLight.compare("")!=0){
             group->setGroupLights(newid,newLight);
         }
-                Wt::WMessageBox::show("Success!",
-                              "<p>You have successfully modified a group.</p>",Wt::StandardButton::Ok);
+        Wt::WMessageBox::show("Success!", "<p>You have successfully modified a group.</p>",Wt::StandardButton::Ok);
     }
     delete modDialog_;
 }
