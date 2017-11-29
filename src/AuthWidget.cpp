@@ -18,10 +18,6 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     return w;
 }
 
-
-
-
-
 void AuthWidget::createLoggedInView(){
     setTemplateText(tr("template.loggedin"));
     address ="";
@@ -34,10 +30,6 @@ void AuthWidget::createLoggedInView(){
     //this is where u can add a widget
     WPushButton *logout = new WPushButton("LOGOUT");
     WText *name = new WText("Hello "  + user->getFName() + "!");
-
-
-
-
 
     Wt :: Orientation orientation1 = Wt :: Vertical;
     //Wt :: Orientation orientation2 = Wt :: Horizontal;
@@ -141,7 +133,7 @@ void AuthWidget::MainPage(){
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
 
-    WPushButton *back = new Wt :: WPushButton("Back");
+    WPushButton *back = new Wt :: WPushButton("Back To Bridge");
     back->clicked().connect(this,&AuthWidget::createLoggedInView);
 
     //creating the header for the page
