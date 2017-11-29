@@ -274,6 +274,7 @@ void AuthWidget::showGroupAdd() {
     //displaying
     addDialog_->finished().connect(this, &AuthWidget::addDialogDone);
     addDialog_->show();
+    addDialog_->setMovable(false);
 
 }
 void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
@@ -284,7 +285,7 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
         cout<<("Welcome, "+addName_->text())<<endl;
 
         //if makeGroup returns true
-        if (name!="" && lights!="") {
+        if (name.compare("")!=0 && lights.compare("")!=0) {
             group->makeGroup("newdeveloper", address,port,name,lights);
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully added a group.</p>", Wt::StandardButton::Ok);
@@ -297,34 +298,83 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
 void AuthWidget::showGroupModify() {
     modDialog_ = new WDialog("Modify");
 
-    /*//creating the name text field
-    new WText("groupid:",modDialog_->contents());
-    groupid_ = new Wt::WLineEdit(modDialog_->contents());
+    //creating the id text field
+    new WText("Group ID:    ",modDialog_->contents());
+    id = new Wt::WLineEdit(modDialog_->contents());
+    id->setInputMask("09;_");
     new WText("<br />",modDialog_->contents());
 
 
+    //creating the on text field
+    new WText("on(true/false):",modDialog_->contents());
+    on = new Wt::WLineEdit(modDialog_->contents());
+    on->setInputMask("B");
+    new WText("<br />",modDialog_->contents());
+
+    //creating the brightness text field
+    new WText("Brightness:  ",modDialog_->contents());
+    bri = new Wt::WLineEdit(modDialog_->contents());
+    bri->setInputMask("009");
+    new WText("<br />",modDialog_->contents());
+
+    //creating the hue text field
+    new WText("Hue:         ",modDialog_->contents());
+    hue = new Wt::WLineEdit(modDialog_->contents());
+    hue->setInputMask("00009");
+    new WText("<br />",modDialog_->contents());
+
+    //creating the sat text field
+    new WText("Saturation:  ",modDialog_->contents());
+    sat = new Wt::WLineEdit(modDialog_->contents());
+   sat ->setInputMask("009");
+    new WText("<br />",modDialog_->contents());
+
     //creating the lights text field
-    new WText("Lights:",modDialog_->contents());
-    addLights = new Wt::WLineEdit(modDialog_->contents());
+    new WText("Light Format: \"1\",\"2\" ",modDialog_->contents());
+    new WText("Change lights to:",modDialog_->contents());
+    modLights = new Wt::WLineEdit(modDialog_->contents());
     new WText("<br />",modDialog_->contents());
 
     //creating the ok button
     Wt::WPushButton *ok = new Wt::WPushButton("Ok", modDialog_->contents());
-    addName_->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
-    addLights->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    id->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    on->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    bri->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    hue->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    sat->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
+    modLights->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
     ok->clicked().connect(modDialog_,&Wt::WDialog::accept);
 
     //displaying
-    modDialog_->finished().connect(this, &AuthWidget::addDialogDone);
-    modDialog_->show();*/
+    modDialog_->finished().connect(this, &AuthWidget::modDialogDone);
+    modDialog_->show();
+    modDialog_->setMovable(false);
 
 
 }
 
-void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
-    if(code == Wt::WDialog::Accepted){
 
-        Wt::WMessageBox::show("Success!",
+void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
+    string newid,newOn, newBri, newHue,newSat,newLight;
+    newid = id->text().toUTF8().c_str();
+    if ((on->text().toUTF8()).compare("1")==0){
+        newOn = "true";
+    }
+    else{
+        newOn = "false";
+    }
+
+    newBri = bri->text().toUTF8().c_str();
+    newHue= hue->text().toUTF8().c_str();
+    newSat = sat->text().toUTF8().c_str();
+    newLight = modLights->text().toUTF8().c_str();
+    if(code == Wt::WDialog::Accepted){
+        group->changeState(newid,newOn,newBri,newHue,newSat);
+        if(newLight.compare("")!=0){
+            group->setGroupLights(newid,newLight);
+        }
+        cout<<"STUFF: "+newid+" "+ newOn+" "+newBri+" "+newHue+" "+newSat<<endl;
+                Wt::WMessageBox::show("Success!",
                               "<p>You have successfully modified a group.</p>",Wt::StandardButton::Ok);
     }
     delete modDialog_;
@@ -349,6 +399,7 @@ void AuthWidget::showGroupDelete() {
     //displaying the dialog and setting the onfinish function
     delDialog_->finished().connect(this, &AuthWidget::delDialogDone);
     delDialog_->show();
+    delDialog_->setMovable(false);
 
 }
 
