@@ -78,29 +78,12 @@ public:
 
     void setGroupIdList(const string &groupIdList);
 
-    string getAllState(string groupId);
 
-
-
-
-//    //add a light by getting the light list and appending a light to it, then using the setGroupAttr to change it
-//    //works
-//    int addLight(string lightID);
-//
-//    //works
-//    int removeLight(string lightID);
-//
-//    //change states not include value if u don't want to change it
-
-
-
-
-        private:
+private:
     std::string address, port, id, name;
     std::string lightList, groupState, groupIdList, username = "newdeveloper";
 
 
-    string vectorToString(vector<string> vec);
 
 
     void handleGetGroups(boost::system::error_code err, const Http::Message &response);
@@ -120,10 +103,6 @@ public:
 
     void handleSetLights(boost::system::error_code err, const Http::Message &response);
 
-    void handleAllGetState(boost::system::error_code err, const Http::Message &response);
-
 };
 
 #endif //TEAM18_GROUPWIDGET_H
-
-

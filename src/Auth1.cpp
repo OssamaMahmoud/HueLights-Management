@@ -178,7 +178,11 @@ public:
 
         authWidget->processEnvironment();
 
+
+
+
         root()->addWidget(authWidget);
+
 
     }
 

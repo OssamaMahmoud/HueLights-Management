@@ -6,7 +6,6 @@
 #include "Group.h"
 #include "boost/algorithm/string.hpp"
 
-//TODO: add proper success status put the code all in it
 Group::Group(){};
 
 //makes a god damn group, duhhhhh!
@@ -21,7 +20,7 @@ void Group::makeGroup(std::string username, std::string address, std::string por
     client->done().connect(boost::bind(&Group::handleMakeGroup,this,_1,_2));
     //create json to send
     string JSON_string = R"({"lights": [)" +
-                        (lights) + R"(], "name": ")" + name +
+                         (lights) + R"(], "name": ")" + name +
                          R"(", "type": ")" +
                          "LightGroup" + R"("})";
 
@@ -31,13 +30,8 @@ void Group::makeGroup(std::string username, std::string address, std::string por
 
     if (client->post(url, body)){
         WApplication::instance()->deferRendering();
-        //TODO: something i guess
         this->id = "";
-//        this->name = name;
-//        this->address = address;
-//        this->port = port;
-//        this->username = username;
-//        lightList = lights;
+
     }
 
 }
@@ -83,7 +77,7 @@ int Group::setGroupLights(string groupId, string newLights) {
     body.addBodyText(JSON_string);
 
     if (client->put(url, body)){
-      WApplication::instance()->deferRendering();
+        WApplication::instance()->deferRendering();
 
         //TODO: something i guess not
         //this->lightList = newLights;
@@ -107,35 +101,6 @@ void Group::handleSetLights(boost::system::error_code err, const Http::Message &
 }
 
 
-//TODO:
-//make group add, to become modify light, which will just take the light list and modify it.
-
-
-//new method to view all the group features
-//name, and all the lights like a double loop
-//make everything static accessed by groupID
-
-//int Group::addLight(string lightID) {
-//
-//    this->lightList.append(", \"" + lightID + "\"");
-//    this->setGroupLights(id, this->lightList);
-//
-//    return 0;
-//}
-//
-//    int Group::removeLight(string lightID) {
-//
-//        //find a way to parse string and remove the god-damn light....
-//        lightID = "\"" + lightID.append("\",");
-//        boost::erase_all(this->lightList, lightID);
-//        lightID = "\"" + lightID.append("\"");
-//
-//        boost::erase_all(this->lightList, lightID);
-//        this->setGroupLights(this->lightList);
-//
-//        return 0;
-//    }
-
 
 //given the group id it can change the state of each of the following, on is a string with value "true" or "false"
 int Group::changeState(string groupId, string on, string bri, string hue, string sat) {
@@ -148,18 +113,16 @@ int Group::changeState(string groupId, string on, string bri, string hue, string
     client->done().connect(boost::bind(&Group::handleChangeState, this,_1,_2));
 
     string JSON_string = R"({"on": ")" + std::string(on) +
-            "\", \"bri\": " + bri +
-            ", \"hue\": " + hue  +
-            ", \"sat\": " + (sat) +
-            R"(})";
+                         "\", \"bri\": " + bri +
+                         ", \"hue\": " + hue  +
+                         ", \"sat\": " + (sat) +
+                         R"(})";
 
     Http::Message body = Http::Message();
     body.addBodyText(JSON_string);
 
     if (client->put(url, body)){
         WApplication::instance()->deferRendering();
-
-        //TODO: something i guess
 
         //update the state by getting it again,
     }
@@ -174,9 +137,7 @@ void Group::handleChangeState(boost::system::error_code err, const Http::Message
 
 
     if (!err && response.status() == 200) {
-        //get the json from the response and then extract the id from it
-        //this->lightList = obj.get("lights");
-        //this->getState();
+        //nothing
     } else {
         cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
     }
@@ -197,8 +158,7 @@ int Group::deleteGroup(string groupId){
 
     if (client->deleteRequest(url, body)){
         WApplication::instance()->deferRendering();
-
-        //TODO: something i guess
+        //nothing
         return 0;
     }
 
@@ -219,14 +179,11 @@ void Group::getGroups(){
 
     if (client->get(url)){
         WApplication::instance()->deferRendering();
-
-        //TODO: something i guess
-        //this->allGroupsString = "";
+        //nothing;
         this->groupIdList = "";
 
     }
 
-    return;
 }
 
 
@@ -261,34 +218,7 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
 }
 
 
-//void Group::handleGetAll(boost::system::error_code err, const Http::Message &response) {
-//    WApplication::instance()->resumeRendering();
-//    Wt::Json::Object obj;
-//    Wt::Json::parse(response.body(),obj);
-//
-//    set<string> names = obj.names();
-//
-//    if (!err && response.status() == 200) {
-//        //get the json from the response and then extract the id from it
-//        //this->lightList = obj.get("lights");
-//
-//        //ik ik its an infinte loop, im break from it, cause this is hacky... AND?
-//        for( auto id  : names){
-//            cout << "please wiork   " << string(id) << endl;
-//            this->getState(string(id));
-//            while(!httpMade)
-//                cout<<"sux"<<endl;
-//            this->allGroupsString.append("GroupID: " + string(id) + " ");
-//            httpMade = false;
-//
-//        }
-//        cout << "our final string is for the groups is:  " << this->allGroupsString;
-//
-//    } else {
-//        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
-//    }
-//}
-//
+
 
 
 //this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
@@ -303,13 +233,13 @@ std::string Group::getState(string groupId) {
 
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
-       WApplication::instance()->deferRendering();
+        WApplication::instance()->deferRendering();
 
         //TODO: something i guess
 
     }
 
-    return "s";
+    return "success";
 }
 
 void Group::handleGetState(boost::system::error_code err, const Http::Message &response) {
@@ -320,8 +250,7 @@ void Group::handleGetState(boost::system::error_code err, const Http::Message &r
 
 
     if (!err && response.status() == 200) {
-        //get the json from the response and then extract the id from it
-        //this->lightList = "";
+        //get the json from the response and then extract the id from it;
         this->groupState = "";
         this->groupState.append(string("Name: ") + string(obj.get("name").toString()) + ", Lights: ");
         Wt::Json::Array lightsArray = obj.get("lights");
@@ -333,52 +262,6 @@ void Group::handleGetState(boost::system::error_code err, const Http::Message &r
                 this->groupState.append(", \"" + string(lightsArray[i].toString()) + "\"");
 
         }
-    }
-}
-
-
-std::string Group::getAllState(string groupId) {
-    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
-
-    Http::Client *client = new Http::Client();
-    client->setTimeout(15);
-    client->setMaximumResponseSize(100*1024);
-    client->done().connect(boost::bind(&Group::handleAllGetState, this,_1,_2));
-
-    //just throwing in null for fun, idk what is supposed to in theres
-    if (client->get(url)){
-       WApplication::instance()->deferRendering();
-
-        //TODO: something i guess
-
-    }
-
-    return "s";
-}
-
-//ITS MESSSSING UP SO BAAAD
-
-void Group::handleAllGetState(boost::system::error_code err, const Http::Message &response) {
-    WApplication::instance()->resumeRendering();
-    Wt::Json::Object obj;
-    cout << "ASS   " << string(response.body()) << endl;
-    Wt::Json::parse(response.body(), obj);
-
-
-    if (!err && response.status() == 200) {
-        //get the json from the response and then extract the id from it
-        //this->lightList = "";
-        this->groupState.append(string(obj.get("name").toString()) + ", Lights: \n");
-        Wt::Json::Array lightsArray = obj.get("lights");
-        //for loop go through the  array and make str of it
-        for (int i = 0; i < lightsArray.size(); i++) {
-            if (i == 0)
-                this->groupState.append("\"" + string(lightsArray[i].toString()) + "\"");
-            else
-                this->groupState.append(", \"" + string(lightsArray[i].toString()) + "\"");
-
-        }
-        this->groupState.append("|");
     }
 }
 
@@ -429,16 +312,6 @@ void Group::setAddress(const string &address){
     this->address = address;
 }
 
-std::string Group::vectorToString(vector<std::string> vec){
-    std::string result;
-    for(int i = 0; i <vec.size(); i++){
-
-        result.append(vec[i]);
-        if(i != vec.size() - 1)
-            result.append(", ");
-    }
-}
-
 const string &Group::getAddress() const {
     return address;
 }
@@ -452,59 +325,3 @@ void Group::setGroupState(const string &groupState) {
 void Group::setGroupIdList(const string &groupIdList) {
     Group::groupIdList = groupIdList;
 }
-
-
-//static int Group::testGroup(){
-//
-//    Bridge *bridge = new Bridge();
-    // address = localhost
-    // port what ever
-//    string the_address = bridge->get_address();
-//    string the_port = bridge->get_port();
-//
-//
-//
-//    string url = "http://" + the_address + ":" + the_port + "api/" + user + "/config";
-//    Http::Client *client = new Http::Client();
-//    client->setTimeout(15);
-//    client->setMaximumResponseSize(100*1024);
-//    client->done().connect(boost::bind(handleBridgeAdd,_1,_2));
-//
-//    if(client->post(url)){
-//
-//    }
-//    else{
-//
-//        //print an error message to the screen
-//        cerr << "can't open url" << endl;
-//    }
-//
-//}
-//
-//void handleBridgeAdd(boost::system::error_code err, const Http::Message& response) {
-//
-//    Wt::Json::Object obj;
-//    Wt::Json::parse(response.body(), obj);
-//
-//    if (!err && response.status() == 200) {
-//        //get the json from the response and then extract the id from it
-//        user = obj.get("username");
-//    } else {
-//        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
-//    }
-//}
-//
-//    void handleNewUser(boost::system::error_code err, const Http::Message& response){
-//
-//    Wt::Json::Object obj;
-//    Wt::Json::parse(response.body(),obj);
-//
-//    if (!err && response.status() == 200) {
-//        //get the json from the response and then extract the id from it
-//        user = obj.get("username");
-//    } else {
-//        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
-//    }
-//
-//}
-

@@ -18,10 +18,15 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     return w;
 }
 
+
+
+
+
 void AuthWidget::createLoggedInView(){
     setTemplateText(tr("template.loggedin"));
     address ="";
     port= "";
+
 
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
@@ -29,6 +34,10 @@ void AuthWidget::createLoggedInView(){
     //this is where u can add a widget
     WPushButton *logout = new WPushButton("LOGOUT");
     WText *name = new WText("Hello "  + user->getFName() + "!");
+
+
+
+
 
     Wt :: Orientation orientation1 = Wt :: Vertical;
     //Wt :: Orientation orientation2 = Wt :: Horizontal;
@@ -139,6 +148,7 @@ void AuthWidget::MainPage(){
     WPushButton *groups = new Wt :: WPushButton("Groups");
     WPushButton *schedules = new Wt :: WPushButton("Schedules");
 
+
     //creating the table to add to the page
     table_ = new Wt :: WTable();
     table_-> setWidth(Wt :: WLength("100%"));
@@ -149,6 +159,8 @@ void AuthWidget::MainPage(){
     lights->clicked().connect(this, &AuthWidget::lightPage);
     groups->clicked().connect(this, &AuthWidget::groupPage);
     schedules->clicked().connect(this, &AuthWidget::schedulePage);
+
+
     //adding to the page
     bindWidget("back",back);
     bindWidget("header", prompt);
@@ -156,23 +168,402 @@ void AuthWidget::MainPage(){
 }
 
 
+
 void AuthWidget:: lightPage(){
-    //yumeng
     setTemplateText(tr("template.loggedinAfterMain"));
     Wt::Dbo::Transaction t(session_);
     dbo::ptr<User> user = session_.user();
     WPushButton *back = new Wt :: WPushButton("Back");
+    Wt :: WText *prompt = new Wt :: WText("                 LIGHTS                   ");
     back->clicked().connect(this,&AuthWidget::MainPage);
-    /*
-    * PROMPT WILL BE THE FIRST LINE AFTER LOGOUT
-    * TABLE IS EVERYTHING THAT COMES AFTER
 
-          add code here
-       bindWidget("back",back);
-       bindWidget("header", prompt);
-       bindWidget("table", table_);
-    */
+    Wt :: Orientation orientation1 = Wt :: Vertical;
+    Wt :: Orientation orientation2 = Wt :: Horizontal;
+
+    /* The descriptions */
+    Wt :: WText *description1 = new Wt :: WText("I want to get all lights");
+    Wt :: WText *description2 = new Wt :: WText("Which light do you want to check?");
+    Wt :: WText *description3 = new Wt :: WText("I want to give No.");
+    Wt :: WText *description4 = new Wt :: WText(" a new name called  ");
+    Wt :: WText *description5 = new Wt :: WText("I want to change the color of No.");
+    Wt :: WText *description6 = new Wt :: WText("light as ");
+    Wt :: WText *description7 = new Wt :: WText(" I want to turn the light");
+    Wt :: WText *description8 = new Wt :: WText("(Enter 'true' for ON, or enter 'false' for OFF)");
+    Wt :: WText *description9 = new Wt :: WText("I want to change the brightness of No.");
+    Wt :: WText *description10 = new Wt :: WText("light as ");
+    Wt :: WText *description11 = new Wt :: WText("(Get all lights first, please)");
+
+    /* Add the description to a table */
+    table_ = new Wt :: WTable();
+    table_-> setWidth(Wt :: WLength("100%"));
+    table_ -> setHeaderCount(11, orientation2);
+
+    table_->elementAt(1, 0)->addWidget(description1);
+    table_->elementAt(2, 0)->addWidget(description2);
+    table_->elementAt(3, 0)->addWidget(description3);
+    table_->elementAt(3, 2)->addWidget(description4);
+    table_->elementAt(4, 0)->addWidget(description5);
+    table_->elementAt(4, 2)->addWidget(description6);
+    table_->elementAt(5, 0)->addWidget(description7);
+    table_->elementAt(5, 3)->addWidget(description8);
+    table_->elementAt(6, 0)->addWidget(description9);
+    table_->elementAt(6, 2)->addWidget(description10);
+    table_->elementAt(1, 2)->addWidget(description11);
+
+    /* Create get all light button */
+    buttonAllLight = new Wt :: WPushButton("Click here");
+
+    /* Create get one specific light button */
+    lightIdEdit_ = new Wt:: WLineEdit();
+    lightIdEdit_->setMaxLength(2);
+    lightIdEdit_->setPlaceholderText("enter light id");
+    buttonOneLight = new Wt :: WPushButton("Check now");
+
+    /* Create rename button */
+    lightIdName_ = new Wt:: WLineEdit();
+    lightIdName_->setMaxLength(2);
+    lightIdName_->setPlaceholderText("enter light id");
+    renameEdit_ = new Wt:: WLineEdit();
+    renameEdit_->setPlaceholderText("name");
+    buttonRename = new Wt :: WPushButton("Rename");
+
+    /* Create change color button */
+    lightIdColor_ = new Wt:: WLineEdit();
+    lightIdColor_->setMaxLength(2);
+    lightIdColor_->setPlaceholderText("enter light id");
+    colorEdit_ = new Wt:: WLineEdit();
+    colorEdit_->setPlaceholderText("color");
+    buttonColor = new Wt :: WPushButton("Change color");
+
+    /* Create turn on/off button */
+    switchId_= new Wt:: WLineEdit();
+    switchId_->setMaxLength(2);
+    switchId_->setPlaceholderText("enter light id");
+    onOrOff_ = new Wt:: WLineEdit();
+    onOrOff_->setPlaceholderText("true/false");
+    buttonTurn = new Wt :: WPushButton("Confirm");
+
+    /* Create change brightness button */
+    lightIdBrightness_ = new Wt:: WLineEdit();
+    lightIdBrightness_->setMaxLength(2);
+    lightIdBrightness_->setPlaceholderText("enter light id");
+    brightnessEdit_ = new Wt:: WLineEdit();
+    brightnessEdit_->setPlaceholderText("brightness");
+    buttonBrightness = new Wt :: WPushButton("Change brightness");
+
+    table_->elementAt(1, 4)->addWidget(buttonAllLight);
+    table_->elementAt(2, 1)->addWidget(lightIdEdit_);
+    table_->elementAt(2, 4)->addWidget(buttonOneLight);
+    table_->elementAt(3, 1)->addWidget(lightIdName_);
+    table_->elementAt(3, 3)->addWidget(renameEdit_);
+    table_->elementAt(3, 4)->addWidget(buttonRename);
+    table_->elementAt(4, 1)->addWidget(lightIdColor_);
+    table_->elementAt(4, 3)->addWidget(colorEdit_);
+    table_->elementAt(4, 4)->addWidget(buttonColor);
+    table_->elementAt(5, 1)->addWidget(switchId_);
+    table_->elementAt(5, 2)->addWidget(onOrOff_);
+    table_->elementAt(5, 4)->addWidget(buttonTurn);
+    table_->elementAt(6, 1)->addWidget(lightIdBrightness_);
+    table_->elementAt(6, 3)->addWidget(brightnessEdit_);
+    table_->elementAt(6, 4)->addWidget(buttonBrightness);
+
+    //redirect
+    buttonAllLight-> clicked().connect(this, &AuthWidget :: toWaitPage1);
+    buttonOneLight-> clicked().connect(this, &AuthWidget :: toWaitPage2);
+    buttonRename-> clicked().connect(this, &AuthWidget :: toRename);
+    buttonColor-> clicked().connect(this, &AuthWidget :: toChangeColor);
+    buttonTurn-> clicked().connect(this, &AuthWidget :: toTurn);
+    buttonBrightness-> clicked().connect(this, &AuthWidget :: toChangeBrightness);
+
+    //make sure get all the lights firstly
+    if(getAll == false){
+        buttonOneLight->disable();
+        buttonRename->disable();
+        buttonColor->disable();
+        buttonTurn->disable();
+        buttonBrightness->disable();
+    }
+
+    //some flags to make sure infomation updated
+    if(secondaryPage1 == true){
+        secondaryPage1 = false;
+    }
+
+    if(secondaryPage2 == true){
+        lightIdEdit_->emptyText();
+        secondaryPage2 = false;
+    }
+    if(secondaryPage3 == true){
+        lightIdName_->emptyText();
+        renameEdit_->emptyText();
+        secondaryPage3 = false;
+    }
+    if(secondaryPage4 == true){
+        lightIdColor_->emptyText();
+        colorEdit_->emptyText();
+        secondaryPage4 = false;
+    }
+    if(secondaryPage5 == true){
+        switchId_->emptyText();
+        onOrOff_->emptyText();
+        secondaryPage5 = false;
+    }
+    if(secondaryPage6 == true){
+        lightIdBrightness_->emptyText();
+        brightnessEdit_->emptyText();
+        secondaryPage6 = false;
+    }
+
+    bindWidget("back",back);
+    bindWidget("header", prompt);
+    bindWidget("table", table_);
 }
+
+// a wait page to avoid no response accepted due to response delay
+void AuthWidget :: toWaitPage1(){
+    table_->clear();
+    getAll = true;
+
+    bridge_.get_allLights();
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+    buttonWait1 = new Wt :: WPushButton("Click here to check result");
+    table_->elementAt(1,0)->addWidget(info);
+    table_->elementAt(2,0)->addWidget(buttonWait1);
+    buttonWait1-> clicked().connect(this, &AuthWidget :: toGetAllLight);
+}
+
+// another wait page to avoid no response accepted due to response delay
+void AuthWidget :: toWaitPage2(){
+    table_->clear();
+    bridge_.get_oneLight(lightIdEdit_->text().toUTF8().c_str());
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+    buttonWait2 = new Wt :: WPushButton("Click here to check result");
+    table_->elementAt(1,0)->addWidget(info);
+    table_->elementAt(2,0)->addWidget(buttonWait2);
+    buttonWait2-> clicked().connect(this, &AuthWidget :: toGetSpecificLight);
+
+}
+
+// method to get all light
+void AuthWidget :: toGetAllLight() {
+    secondaryPage1 = true;
+    getAll = true;
+
+    table_->clear();
+
+    Wt :: WText *allLightDescription = new Wt :: WText(bridge_.get_lightSet());
+    Wt :: WText *info = new Wt :: WText("You have lights with id: ");
+
+    table_->elementAt(0,0)->addWidget(info);
+    table_->elementAt(1,0)->addWidget(allLightDescription);
+
+
+    lightButton =  new Wt :: WPushButton("Back to light page");
+    table_->elementAt(2,0)->addWidget(lightButton);
+    lightButton-> clicked().connect(this, &AuthWidget :: lightPage);
+}
+
+// method to get one specific light information
+void AuthWidget :: toGetSpecificLight() {
+    secondaryPage2 = true;
+
+    table_->clear();
+
+
+    string lightID = lightIdEdit_->text().toUTF8().c_str();
+    set<string> lightSet = bridge_.get_testSet();
+
+    if(lightSet.count(lightID) != 0){
+        Wt :: WText *info = new Wt :: WText("The status of this light: ");
+        Wt :: WText *oneLightDescription = new Wt :: WText(bridge_.get_oneLightContent());
+        table_->elementAt(0,0)->addWidget(info);
+        table_->elementAt(1,0)->addWidget(oneLightDescription);
+    }else{
+        Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
+        Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
+        table_->elementAt(0,0)->addWidget(infoError);
+        table_->elementAt(1,0)->addWidget(errorDescription);
+    }
+
+    lightButton =  new Wt :: WPushButton("Back to light page");
+    table_->elementAt(2,0)->addWidget(lightButton);
+    lightButton-> clicked().connect(this, &AuthWidget :: lightPage);
+
+}
+
+//method to rename a light
+void AuthWidget :: toRename() {
+    secondaryPage3 = true;
+    table_->clear();
+
+    bridge_.change_lightName(lightIdName_->text().toUTF8().c_str(),renameEdit_->text().toUTF8().c_str());
+
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+
+    table_->elementAt(0,0)->addWidget(info);
+
+    buttonResult =  new Wt :: WPushButton("Next");
+    table_->elementAt(2,0)->addWidget(buttonResult);
+    buttonResult-> clicked().connect(this, &AuthWidget ::  toResult);
+}
+
+// method to change a light's color
+void AuthWidget :: toChangeColor() {
+    secondaryPage4 = true;
+    table_->clear();
+
+    bridge_.change_lightColour(lightIdColor_->text().toUTF8().c_str(), colorEdit_->text().toUTF8().c_str());
+
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+    table_->elementAt(0,0)->addWidget(info);
+
+    buttonResult =  new Wt :: WPushButton("Next");
+    table_->elementAt(2,0)->addWidget(buttonResult);
+    buttonResult-> clicked().connect(this, &AuthWidget ::  toResult);
+}
+
+// method to turn on/off a light
+void AuthWidget :: toTurn() {
+    secondaryPage5 = true;
+    table_->clear();
+
+    bridge_.change_lightTurn(switchId_->text().toUTF8().c_str(), onOrOff_->text().toUTF8().c_str());
+
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+    table_->elementAt(0,0)->addWidget(info);
+
+    buttonResult =  new Wt :: WPushButton("Next");
+    table_->elementAt(2,0)->addWidget(buttonResult);
+    buttonResult-> clicked().connect(this, &AuthWidget :: toResult);
+}
+
+// method to change a light's brightness
+void AuthWidget :: toChangeBrightness() {
+    secondaryPage6 = true;
+    table_->clear();
+
+    bridge_.change_lightBrightness(lightIdBrightness_->text().toUTF8().c_str(), brightnessEdit_->text().toUTF8().c_str());
+
+
+    Wt :: WText *info = new Wt :: WText("Your request has been sent.");
+    table_->elementAt(0,0)->addWidget(info);
+
+    buttonResult =  new Wt :: WPushButton("Next");
+    table_->elementAt(2,0)->addWidget(buttonResult);
+    buttonResult-> clicked().connect(this, &AuthWidget :: toResult);
+}
+
+//method to accept the answer from rename, change color, turn on/off, change brightness methods
+void AuthWidget :: toResult(){
+    // if call rename method
+    if(secondaryPage3 == true){
+        table_->clear();
+
+        string lightID = lightIdName_->text().toUTF8().c_str();
+        set<string> lightSet = bridge_.get_testSet();
+
+        if(lightSet.count(lightID) != 0){
+            Wt :: WText *info = new Wt :: WText("The answer is: ");
+            Wt :: WText *oneLightDescription = new Wt :: WText(bridge_.get_newLightNameResponse());
+            table_->elementAt(0,0)->addWidget(info);
+            table_->elementAt(1,0)->addWidget(oneLightDescription);
+        }else{
+            Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
+            Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
+            table_->elementAt(0,0)->addWidget(infoError);
+            table_->elementAt(1,0)->addWidget(errorDescription);
+        }
+    }
+    // if call change-color method
+    if(secondaryPage4 == true){
+        table_->clear();
+
+        string lightID = lightIdColor_->text().toUTF8().c_str();
+        set<string> lightSet = bridge_.get_testSet();
+
+        if(lightSet.count(lightID) != 0){
+            Wt :: WText *info = new Wt :: WText("The answer is: ");
+            if((stoi(colorEdit_->text().toUTF8()) >= 0) && (stoi(colorEdit_->text().toUTF8()) <= 65535)){
+                Wt :: WText *colorDescription = new Wt :: WText(bridge_.get_newLightColourResponse());
+                table_->elementAt(0,0)->addWidget(info);
+                table_->elementAt(1,0)->addWidget(colorDescription);
+            }else{
+                Wt :: WText *errorDescription = new Wt :: WText("No such color");
+                table_->elementAt(1,0)->addWidget(errorDescription);
+            }
+        }else{
+            Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
+            Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
+            table_->elementAt(0,0)->addWidget(infoError);
+            table_->elementAt(1,0)->addWidget(errorDescription);
+        }
+    }
+    // if call turn-on/off method
+    if(secondaryPage5 == true){
+        table_->clear();
+
+        string lightID = switchId_->text().toUTF8().c_str();
+        set<string> lightSet = bridge_.get_testSet();
+
+        if(lightSet.count(lightID) != 0){
+            Wt :: WText *info = new Wt :: WText("The answer is: ");
+
+            if((onOrOff_->text().toUTF8() == "true") || (onOrOff_->text().toUTF8() == "false")){
+                Wt :: WText *switchDescription = new Wt :: WText(bridge_.get_newLightTurnResponse());
+
+                table_->elementAt(0,0)->addWidget(info);
+                table_->elementAt(1,0)->addWidget(switchDescription);
+            }else{
+                Wt :: WText *errorDescription = new Wt :: WText("wrong format");
+                table_->elementAt(1,0)->addWidget(errorDescription);
+            }
+        }else{
+            Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
+            Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
+            table_->elementAt(0,0)->addWidget(infoError);
+            table_->elementAt(1,0)->addWidget(errorDescription);
+
+        }
+    }
+    // if call change-brightness method
+    if(secondaryPage6 == true){
+        table_->clear();
+
+        string lightID = lightIdBrightness_->text().toUTF8().c_str();
+        set<string> lightSet = bridge_.get_testSet();
+
+        if(lightSet.count(lightID) != 0){
+            Wt :: WText *info = new Wt :: WText("The answer is: ");
+
+            if((stoi(brightnessEdit_->text().toUTF8()) >= 0) && (stoi(brightnessEdit_->text().toUTF8()) <= 254)){
+                Wt :: WText *brightnessDescription = new Wt :: WText(bridge_.get_newLightBrightnessResponse());
+
+                table_->elementAt(0,0)->addWidget(info);
+                table_->elementAt(1,0)->addWidget(brightnessDescription);
+            }else{
+                Wt :: WText *errorDescription = new Wt :: WText("no such brightness");
+                table_->elementAt(1,0)->addWidget(errorDescription);
+        }
+        }else{
+            Wt :: WText *infoError = new Wt :: WText("Sorry.\n");
+            Wt :: WText *errorDescription = new Wt :: WText("wrong light id");
+            table_->elementAt(0,0)->addWidget(infoError);
+            table_->elementAt(1,0)->addWidget(errorDescription);
+        }
+
+    }
+
+    // button to go back light page
+    lightButton =  new Wt :: WPushButton("Back to light page");
+    table_->elementAt(2,0)->addWidget(lightButton);
+    lightButton-> clicked().connect(this, &AuthWidget :: lightPage);
+}
+
 
 void AuthWidget:: schedulePage(){
     //marlin
