@@ -147,6 +147,7 @@ void AuthWidget::MainPage(){
     table_->elementAt(3,3)->addWidget(lights);
     table_->elementAt(3,4)->addWidget(groups);
     table_->elementAt(3,5)->addWidget(schedules);
+    //connect the buttons to the pages
     lights->clicked().connect(this, &AuthWidget::lightPage);
     groups->clicked().connect(this, &AuthWidget::groupPage);
     schedules->clicked().connect(this, &AuthWidget::schedulePage);
@@ -318,7 +319,9 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
 
         //if makeGroup returns true
         if (name.compare("")!=0 && lights.compare("")!=0) {
+            //create a group for the user
             group->makeGroup("newdeveloper", address,port,name,lights);
+            //prompt the user
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully added a group.</p>", Wt::StandardButton::Ok);
         }
@@ -369,6 +372,7 @@ void AuthWidget::showGroupModify() {
 
     //creating the ok button
     Wt::WPushButton *ok = new Wt::WPushButton("Ok", modDialog_->contents());
+    //sending the wLineEdits to the acceptDialog to process
     id->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
     on->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
     bri->enterPressed().connect(modDialog_,&Wt::WDialog::accept);
@@ -389,9 +393,11 @@ void AuthWidget::showGroupModify() {
 void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     string newid,newOn, newBri, newHue,newSat,newLight;
     newid = id->text().toUTF8().c_str();
+    //if the on is true
     if ((on->text().toUTF8()).compare("1")==0){
         newOn = "true";
     }
+        //else on=false
     else{
         newOn = "false";
     }
@@ -401,11 +407,12 @@ void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     newSat = sat->text().toUTF8().c_str();
     newLight = modLights->text().toUTF8().c_str();
     if(code == Wt::WDialog::Accepted){
+        //change the values with what the user entered
         group->changeState(newid,newOn,newBri,newHue,newSat);
+        //change the lights in the group
         if(newLight.compare("")!=0){
             group->setGroupLights(newid,newLight);
         }
-        cout<<"STUFF: "+newid+" "+ newOn+" "+newBri+" "+newHue+" "+newSat<<endl;
                 Wt::WMessageBox::show("Success!",
                               "<p>You have successfully modified a group.</p>",Wt::StandardButton::Ok);
     }
@@ -441,8 +448,10 @@ void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
     if(code == Wt::WDialog::Accepted){
         int i;
         string id = delGroupID->text().toUTF8();
+        //delete the group and prompt user
         if (id !=""){
             i =group->deleteGroup(id);
+            group->getGroups();
             Wt::WMessageBox::show("Success!",
                                   "<p>You have successfully deleted group " + delGroupID->text().toUTF8()+".</p>",Wt::StandardButton::Ok);
         }
@@ -453,5 +462,4 @@ void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
     }
 
     delete delDialog_;
-    cout<<"dialog deleted"<<endl;
 }
