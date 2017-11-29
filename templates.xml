@@ -3,11 +3,31 @@
     <message id="template.loggedin">
         <label>
             <div>
-                ${name}
+                ${name}${logoutButton}
+                <br />
             </div>
+            <div >
+                ${header}
+            </div>
+            <div >
+                ${table}
+            </div>
+
+        </label>
+    </message>
+    <message id="template.loggedinAfterMain">
+        <label>
             <div>
-                ${logoutButton}
+                ${back}${header}${logoutButton}
+                <br />
             </div>
+
+            <div >
+
+                ${table}
+
+            </div>
+
         </label>
     </message>
     <message id="template.registration">
@@ -22,29 +42,31 @@
                 <label for="${id:user-name}">${user-name-label}
                     ${user-name-info class="Wt-info"}
                     ${confirm-is-you class="Wt-info"}
+
                 </label>
+                <br />
                 ${user-name}
                 ${</if:user-name>}
-
+                <br />
                 ${<if:choose-password>}
                 <label for="${id:choose-password}">${tr:Wt.Auth.choose-password}
                     ${choose-password-info class="Wt-info"}
                 </label>
                 ${choose-password}
-
+                <br />
                 <label for="${id:repeat-password}">${tr:Wt.Auth.repeat-password}
                     ${repeat-password-info class="Wt-info"}
                 </label>
                 ${repeat-password}
                 ${</if:choose-password>}
-
+                <br />
                 ${<if:email>}
                 <label for="${id:email}">${tr:Wt.Auth.email}
                     ${email-info class="Wt-info"}
                 </label>
                 ${email}
                 ${</if:email>}
-
+                <br />
                 <label for="${id:fName}">First Name:
 
                 </label>
@@ -53,6 +75,7 @@
 
                 </label>
                 ${lName}
+
             </div>
 
             ${<if:oauth>}

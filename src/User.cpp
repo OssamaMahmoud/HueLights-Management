@@ -7,6 +7,22 @@
 #include <Wt/Dbo/Impl>
 #include <Wt/Auth/Dbo/AuthInfo>
 
+const string &User::getBridgeIp() const {
+    return bridgeIp;
+}
+
+void User::setBridgeIp(const string &bridgeIp) {
+    User::bridgeIp = bridgeIp;
+}
+
+const string &User::getBridgePort() const {
+    return bridgePort;
+}
+
+void User::setBridgePort(const string &bridgePort) {
+    User::bridgePort = bridgePort;
+}
+
 DBO_INSTANTIATE_TEMPLATES(User);
 
 void User::setFName(const std::string &fName) {

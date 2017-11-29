@@ -22,5 +22,6 @@ void UserDetailsModel::save(const Wt::Auth::User& authUser)
     Wt::Dbo::ptr<User> user = _session.user(authUser);
     user.modify()->setFName(valueText(fNameField).toUTF8());
     user.modify()->setLName(valueText(lNameField).toUTF8());
-
+    user.modify()->setBridgeIp("");
+    user.modify()->setBridgePort("");
 }

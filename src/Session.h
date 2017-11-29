@@ -21,6 +21,7 @@ typedef Wt::Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
 
 
 class Session : public dbo::Session
+
 {
 public:
     static void configureAuth();
