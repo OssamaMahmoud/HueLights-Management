@@ -213,6 +213,7 @@ void Group::getGroups(){
 
     //just throwing in null for fun, idk what is supposed to in theres
     if (client->get(url)){
+        WApplication::instance()->deferRendering();
         //TODO: something i guess
         //this->allGroupsString = "";
         this->groupIdList = "";

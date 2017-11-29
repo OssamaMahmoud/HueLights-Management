@@ -62,6 +62,9 @@ void AuthWidget::createLoggedInView(){
     bridgeAddress_ = new Wt:: WLineEdit();
     bridgeAddress_->setInputMask("009.009.009.009;_");
     bridgeAddress_->setPlaceholderText("enter address");
+    if(user->getBridgeIp().compare("")!=0){
+        bridgeAddress_->setText((user->getBridgeIp()));
+    }
     choosePage->elementAt(1,0)->addWidget(description2);
     choosePage->elementAt(1,1)->addWidget(bridgeAddress_);
 
@@ -69,6 +72,9 @@ void AuthWidget::createLoggedInView(){
     bridgePort_ = new Wt:: WLineEdit();
     bridgePort_->setInputMask("9999;_");
     bridgePort_->setPlaceholderText("enter port");
+    if(user->getBridgePort().compare("")!=0){
+        bridgePort_->setText((user->getBridgePort()));
+    }
     choosePage->elementAt(2,0)->addWidget(description3);
     choosePage->elementAt(2,1)->addWidget(bridgePort_);
 
@@ -103,6 +109,7 @@ void AuthWidget::ConnectToBridge() {
     address = bridgeAddress_->text().toUTF8();
     port = bridgePort_->text().toUTF8();
     reference = bridgeReference_->text().toUTF8();
+
     user.modify()->setBridgeIp(address);
     user.modify()->setBridgePort(port);
     session_.flush();
@@ -216,8 +223,7 @@ void AuthWidget::groupPage(){
     //need this for the get views
     WPushButton *getGroupsId = new Wt :: WPushButton("View Groups");
 
-    result = new WText("Result");
-    result->setText("");
+
 
 
 
@@ -231,7 +237,6 @@ void AuthWidget::groupPage(){
     table_->elementAt(4,3)->addWidget(getGroupsId);
 
     innerTable = new Wt :: WTable();
-    innerTable->elementAt(0,0)->addWidget(result);
     table_->elementAt(5,5)->addWidget(innerTable);
 
 
@@ -254,7 +259,7 @@ void AuthWidget::groupPage(){
     string IDs = group->getGroupIdList();//will be empty
 
 
-    getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
+   //getGroupsId->clicked().connect(this, &AuthWidget::getGroupsIdHandler);
 
     view->clicked().connect(this,&AuthWidget::viewNow);
 
@@ -262,11 +267,9 @@ void AuthWidget::groupPage(){
 
 
 void AuthWidget::viewNow(){
-    result->setText(group->getGroupState());
 }
 
 void AuthWidget::individualGroupButton(string id){
-    result->setText("");
     group->getState(id);
 }
 
