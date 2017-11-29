@@ -40,6 +40,7 @@
 
          Group *group;
          Wt::WDialog *addDialog_,*modDialog_,*delDialog_;
+         WTable *innerTable;
          WLineEdit *addName_,*addLights,*delGroupID,*id,*on,*bri,*hue,*sat,*modLights,*modName;
 
          void createLoggedInView();
@@ -54,7 +55,9 @@
          void modDialogDone(Wt::WDialog::DialogCode code);
          void showGroupDelete();
          void delDialogDone(Wt::WDialog::DialogCode code);
-         void pushNowHandler();
+         void viewNow();
+         void individualGroupButton(string id);
+         void getGroupsIdHandler();
  };
 
 

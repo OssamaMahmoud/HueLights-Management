@@ -237,7 +237,7 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
             cout << "please wiork   " << string(id) << endl;
             //this->getState(string(id));
 
-            this->groupIdList.append(string(id) + ", ");
+            this->groupIdList.append(string(id) + ",");
         }
         //remove the last comma
         this->groupIdList = this->groupIdList.substr(0, groupIdList.length() - 2);
@@ -283,6 +283,7 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
 
 //this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
 std::string Group::getState(string groupId) {
+
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
 
     Http::Client *client = new Http::Client();
@@ -299,52 +300,75 @@ std::string Group::getState(string groupId) {
     return "s";
 }
 
-
 void Group::handleGetState(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Object obj;
     cout << "ASS   " << string(response.body()) << endl;
-    Wt::Json::parse(response.body(),obj);
+    Wt::Json::parse(response.body(), obj);
 
 
     if (!err && response.status() == 200) {
         //get the json from the response and then extract the id from it
         //this->lightList = "";
+        this->groupState = "";
         this->groupState.append(string(obj.get("name").toString()) + ", ");
         Wt::Json::Array lightsArray = obj.get("lights");
         //for loop go through the  array and make str of it
-        for(int i = 0; i < lightsArray.size(); i++){
-            if(i == 0)
+        for (int i = 0; i < lightsArray.size(); i++) {
+            if (i == 0)
                 this->groupState.append("\"" + string(lightsArray[i].toString()) + "\"");
             else
                 this->groupState.append(", \"" + string(lightsArray[i].toString()) + "\"");
 
         }
-
-//        this->name = "";
-//        this->on = "";
-//        this->bri = "";
-//        this->hue = "";
-//
-//        this->name.append(obj.get("name").toString());
-//
-//        if(!obj.get("action").isNull()) {
-//            Json::Object action = obj.get("action");
-//
-//            this->on.append(action.get("on").toString());
-//
-//            this->bri.append(action.get("bri").toString());
-//
-//            this->sat = "";
-//            this->sat.append(action.get("sat").toString());
-//
-//            this->hue.append(action.get("hue").toString());
-//        }
-
-    } else {
-        cerr << "Error handling the http response: " << err << ". Response code: " << response.status() << endl;
     }
 }
+
+
+std::string Group::getAllState(string groupId) {
+    string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
+
+    Http::Client *client = new Http::Client();
+    client->setTimeout(15);
+    client->setMaximumResponseSize(100*1024);
+    client->done().connect(boost::bind(&Group::handleAllGetState, this,_1,_2));
+
+    //just throwing in null for fun, idk what is supposed to in theres
+    if (client->get(url)){
+        //TODO: something i guess
+
+    }
+
+    return "s";
+}
+
+//ITS MESSSSING UP SO BAAAD
+
+void Group::handleAllGetState(boost::system::error_code err, const Http::Message &response) {
+    WApplication::instance()->resumeRendering();
+    Wt::Json::Object obj;
+    cout << "ASS   " << string(response.body()) << endl;
+    Wt::Json::parse(response.body(), obj);
+
+
+    if (!err && response.status() == 200) {
+        //get the json from the response and then extract the id from it
+        //this->lightList = "";
+        this->groupState.append(string(obj.get("name").toString()) + ", Lights: \n");
+        Wt::Json::Array lightsArray = obj.get("lights");
+        //for loop go through the  array and make str of it
+        for (int i = 0; i < lightsArray.size(); i++) {
+            if (i == 0)
+                this->groupState.append("\"" + string(lightsArray[i].toString()) + "\"");
+            else
+                this->groupState.append(", \"" + string(lightsArray[i].toString()) + "\"");
+
+        }
+        this->groupState.append("|");
+    }
+}
+
+
 
 const string &Group::getPort() const {
     return port;
