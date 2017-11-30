@@ -1,16 +1,26 @@
-//
-// Created by ubuntu on 11/21/17.
-//
+/*!
+ * \brief Class that makes POST and GET calls to the Emulator
+ * @author Ossama
+ */
 
-#include <err.h>
 #include "Group.h"
 #include "boost/algorithm/string.hpp"
 
+/*!
+ * \brief default constructor
+ */
 Group::Group(){};
 
 
-//makes a god damn group, duhhhhh!
-//to know the id of the group u made keep checking the value of groupId, if empty then wait
+/*!
+ *  \brief Creates a group and posts its to the url given via a post request
+ * @param username
+ * @param address
+ * @param port
+ * @param name
+ * @param lights
+ * @author Ossama
+ */
 void Group::makeGroup(std::string username, std::string address, std::string port, std::string name, std::string lights) {
 
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups";
@@ -37,7 +47,12 @@ void Group::makeGroup(std::string username, std::string address, std::string por
     }
 
 }
-
+/*!
+ * \brief handles the request received back from the emulator
+ * @param err
+ * @param response
+ * @author Ossama
+ */
 void Group::handleMakeGroup(boost::system::error_code err, const Http::Message& response) {
     WApplication::instance()->resumeRendering();
 
@@ -62,7 +77,14 @@ void Group::handleMakeGroup(boost::system::error_code err, const Http::Message& 
 
 
 
-//takes a string for group id and sets that respective group's lightstring to the light string;
+/*!
+ * \brief takes a string for group id and sets that respective group's lightstring to the light string given through a put request
+ * via a post request
+ * @param groupId
+ * @param newLights
+ * @return
+ * @author Ossama
+ */
 int Group::setGroupLights(string groupId, string newLights) {
 
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId;
@@ -88,6 +110,12 @@ int Group::setGroupLights(string groupId, string newLights) {
 }
 
 
+/*!
+ * \brief handles the setLights response from the emulator
+ * @param err
+ * @param response
+ * @author Ossama
+ */
 void Group::handleSetLights(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Array obj;
@@ -101,9 +129,18 @@ void Group::handleSetLights(boost::system::error_code err, const Http::Message &
     }
 }
 
+/*!
+ * \brief given the group id it can change the state of each of the following, on is a string with value "true" or "false"
+ *  via a put request
+ * @param groupId
+ * @param on
+ * @param bri
+ * @param hue
+ * @param sat
+ * @return
+ * @author Ossama
+ */
 
-
-//given the group id it can change the state of each of the following, on is a string with value "true" or "false"
 int Group::changeState(string groupId, string on, string bri, string hue, string sat) {
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId + "/action";
 
@@ -130,6 +167,12 @@ int Group::changeState(string groupId, string on, string bri, string hue, string
     return 0;
 }
 
+/*!
+ * \brief handle the request sent back from the server
+ * @param err
+ * @param response
+ * @author Ossama
+ */
 void Group::handleChangeState(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Array obj;
@@ -143,8 +186,11 @@ void Group::handleChangeState(boost::system::error_code err, const Http::Message
     }
 }
 
-
-//deletes a group
+/*!
+ * \brief delete a group via a delete request with the id
+ * @param groupId
+ * @return
+ */
 int Group::deleteGroup(string groupId){
 
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
@@ -165,10 +211,12 @@ int Group::deleteGroup(string groupId){
     return 1;
 }
 
-
-
-//gets all the groups in a comma seperated string, keep checking till the groupIdList is not empty
-//like while (empty(this->groupIdList))... wait and then call the get states on each one individually
+/*!
+ * \brief get all groups from the bridge via a get request
+ * gets all the groups in a comma seperated string, keep checking till the groupIdList is not empty
+ * like while (empty(this->groupIdList))... wait and then call the get states on each one individually
+ * @author Ossama
+ */
 void Group::getGroups(){
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups" ;
 
@@ -187,7 +235,12 @@ void Group::getGroups(){
 
 }
 
-
+/*!
+ * \brief handle the request sent back from the emulator
+ * @param err
+ * @param response
+ * @author Ossama
+ */
 void Group::handleGetGroups(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
 
@@ -218,7 +271,13 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
 }
 
 
-//this beautiful function when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1, lightID2"
+/*!
+ * \brief when given a groupID returns the state of the group, like the name, the light list, as a string "name, lightID1,
+ * lightID2" via a get request
+ * @param groupId
+ * @return
+ * @author Ossama
+ */
 std::string Group::getState(string groupId) {
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
 
@@ -238,10 +297,14 @@ std::string Group::getState(string groupId) {
     return "success";
 }
 
+/*!
+ * \brief handle the request sent back from the emulator
+ * @param err
+ * @param response
+ */
 void Group::handleGetState(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Object obj;
-    cout << "ASS   " << string(response.body()) << endl;
     Wt::Json::parse(response.body(), obj);
 
 
@@ -261,7 +324,11 @@ void Group::handleGetState(boost::system::error_code err, const Http::Message &r
     }
 }
 
-
+/*!
+ * \brief returns all states of the groups
+ * @param groupId
+ * @return
+ */
 std::string Group::getAllState(string groupId) {
     string url = "http://" + address + ":" + port + "/api/" + username + "/groups/" + groupId ;
 
@@ -279,11 +346,14 @@ std::string Group::getAllState(string groupId) {
     return "s";
 }
 
-
+/*!
+ * \brief handle the request from the getAllState
+ * @param err
+ * @param response
+ */
 void Group::handleAllGetState(boost::system::error_code err, const Http::Message &response) {
     WApplication::instance()->resumeRendering();
     Wt::Json::Object obj;
-    cout << "ASS   " << string(response.body()) << endl;
     Wt::Json::parse(response.body(), obj);
 
     if (!err && response.status() == 200) {
@@ -304,67 +374,123 @@ void Group::handleAllGetState(boost::system::error_code err, const Http::Message
 }
 
 
-
+/*!
+ * \brief get the port
+ * @return
+ */
 const string &Group::getPort() const {
     return port;
 }
-
+/*!
+ * \brief set the port of the groups
+ * @param port
+ */
 void Group::setPort(const string &port) {
     Group::port = port;
 }
 
+/*!
+ * \brief get Id for the group
+ * @return
+ */
 const string &Group::getId() const {
     return id;
 }
 
+/*!
+ * \brief set the id for the group
+ * @param id
+ */
 void Group::setId(const string &id) {
     Group::id = id;
 }
 
+/*!
+ * \brief get the name
+ * @return
+ */
 const string &Group::getName() const {
     return name;
 }
 
+/*!
+ * \brief set the name
+ * @param name
+ */
 void Group::setName(const string &name) {
     Group::name = name;
 }
 
-
+/*!
+ * \brief get the light list of the group
+ * @return
+ */
 const string &Group::getLightList() const {
     return lightList;
 }
 
+/*!
+ * \brief set the list of lights
+ */
 void Group::setLightList(const string &lightList) {
     Group::lightList = lightList;
 }
 
+/*!
+ * \brief get the username
+ * @return
+ */
 const string &Group::getUsername() const {
     return username;
 }
 
+/*!
+ * \brief set the username
+ * @param username
+ */
 void Group::setUsername(const string &username) {
     Group::username = username;
 }
-
+/*!
+ * \brief set the address
+ * @param address
+ */
 void Group::setAddress(const string &address){
     this->address = address;
 }
-
+/*!
+ * \brief get the address
+ * @return
+ */
 const string &Group::getAddress() const {
     return address;
 }
-
+/*!
+ * \brief get the group states
+ * @param groupState
+ */
 void Group::setGroupState(const string &groupState) {
     Group::groupState = groupState;
 }
 
+/*!
+ * \brief set the idList
+ * @param groupIdList
+ */
 void Group::setGroupIdList(const string &groupIdList) {
     Group::groupIdList = groupIdList;
 }
-
+/*!
+ *  \brief get the group state
+ * @return
+ */
 string Group::getGroupState(){
     return groupState;
 }
+/*!
+ * \brief get the groupidList
+ * @return
+ */
 string Group::getGroupIdList() {
     return groupIdList;
 }
