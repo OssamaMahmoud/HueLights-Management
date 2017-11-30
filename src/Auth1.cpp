@@ -21,8 +21,6 @@
 #include "AuthWidget.h"
 #include "Group.h"
 
-//using namespace Wt;
-
 class AuthApplication : public Wt::WApplication
 {
 
@@ -39,6 +37,9 @@ public:
 
 
     }
+    /*
+     * \brief send the user to the main view
+     */
     void toHome() {
 
         /* The orientation for table_ */
@@ -119,7 +120,9 @@ public:
         }
     }
 
-
+/*!
+ * \brief send the user to the login page
+ */
     void toLogin() {
 
         setTitle("Login");
@@ -154,7 +157,9 @@ public:
         root()->addWidget(authWidget);
 
     }
-
+/*!
+ * \brief send user to the register page
+ */
     void toRegister() {
 
         setTitle("Register");
@@ -181,7 +186,9 @@ public:
 
     }
 
-    /* Authentication event which initalizes new user session */
+    /*!
+     * \brief Authentication event which initializes new user session
+     */
     void authEvent() {
         if (session_.login().loggedIn()) {
             const Wt::Auth::User& u = session_.login().user();
@@ -212,17 +219,26 @@ private:
 
 };
 
+/*!
+ * \brief create the application
+ * @param env
+ * @return
+ */
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 {
     AuthApplication *app = new AuthApplication(env);
     app->messageResourceBundle().use("templates");
     app->messageResourceBundle().use(AuthApplication::appRoot() + "templates");
-
     return app;
 }
 
 
-
+/*!
+ * \brief create the server
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char **argv)
 {
 
