@@ -1,20 +1,37 @@
-//
-// Created by ubuntu on 11/7/17.
-//
+/*!
+ * \brief Handle the Bridge and Lights JSON response calls from the emulator
+ * @Authors Alex
+ */
 
 #include "Bridge.h"
 
 using namespace Wt;
 using namespace std;
+/*!
+ * \brief constructor for the bridge
+ * @param parent
+ *
+ */
 Bridge::Bridge(WContainerWidget *parent):WContainerWidget(parent){
 
 }
 
+/*!
+ * \brief destructor for the bridge
+ *
+ */
 Bridge::~Bridge(){
 
 }
 
 /************************************* BRIDGE http request ****************************************/
+/*!
+ * \brief handle the url being used to post and get json
+ * @param the_address
+ * @param the_port
+ * @param the_reference
+ * @authors Jimmy, Alex
+ */
 
 void Bridge::defaultConnect(string the_address, string the_port, string the_reference) {
     set_tempAdd(the_address);
@@ -42,7 +59,14 @@ void Bridge::defaultConnect(string the_address, string the_port, string the_refe
         cerr << "can't open url\n\n\n\n\n\n\n\n\n" << endl;
     }
 }
-
+/*!
+ * \brief modify a bridge with the three strings being passed in
+ * @param address
+ * @param port
+ * @param username
+ * @param reference
+ * @author Alex
+ */
 void Bridge::modifyBridge(string address, string port, string username, string reference) {
     set_tempAdd(address);
     set_tempPort(port);
@@ -51,6 +75,13 @@ void Bridge::modifyBridge(string address, string port, string username, string r
     testBridge(address, port, username);
 }
 
+/*!
+ * \brief Test the bridge for the correct url
+ * @param the_address
+ * @param the_port
+ * @param the_username
+ * @author Alex
+ */
 void Bridge::testBridge(string the_address, string the_port, string the_username) {
 
     string url = "http://" + the_address + ":" + the_port + "/api/" + the_username + "/";
@@ -72,7 +103,10 @@ void Bridge::testBridge(string the_address, string the_port, string the_username
 
 
 /************************************* LIGHT http request ****************************************/
-
+/*!
+ * \brief get the lights via a getcall
+ * @author Alex
+ */
 void Bridge::get_allLights() {
 
     string url = get_URL() + "lights";
@@ -90,7 +124,11 @@ void Bridge::get_allLights() {
         cerr << "can't open url" << endl;
     }
 }
-
+/*!
+ * \brief get a single light
+ * @param light_id
+ * @author Alex
+ */
 void Bridge::get_oneLight(string light_id) {
 
     string url = get_URL() + "lights/" + light_id;

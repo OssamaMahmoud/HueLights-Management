@@ -1,3 +1,7 @@
+/*!
+ * \brief The main application that hosts the server
+ * @author Marlin, Ossama
+ */
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 #include <Wt/WServer>

@@ -1,14 +1,28 @@
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/trim.hpp>
+/*!
+ * \brief The AuthWidget class is the authentication, for when a user signs in
+ * This class keeps the user session alive, and allows the suer to navigate through the application
+ *
+ *
+ * @authors Jimmy, Ossama, Yumeng, Marlin
+ */
 #include "AuthWidget.h"
 
+/*!
+ * \brief Create a new view for the user
+ *
+ * @param session
+ */
 AuthWidget::AuthWidget(Session& session): Wt::Auth::AuthWidget(Session::auth(), session.users(),
                                                                session.login()),session_(session){
     group = new Group();
 }
 
 
+/*!
+ * \brief create the registration view so the user can sign in
+ * @param id
+ * @return the model to be used
+ */
 Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     RegistrationView *w = new RegistrationView(session_, this);
     Wt::Auth::RegistrationModel *model = createRegistrationModel();
@@ -18,6 +32,11 @@ Wt::WWidget *AuthWidget::createRegistrationView(const Wt::Auth::Identity& id){
     return w;
 }
 
+/*!
+ *  \brief creates the bridge view where the user can enter bridge information
+ *  @authors Jimmy, Yumeng
+ *
+ */
 void AuthWidget::createLoggedInView(){
     setTemplateText(tr("template.loggedin"));
     address ="";
@@ -52,8 +71,10 @@ void AuthWidget::createLoggedInView(){
 
     Wt :: WText *description2 = new Wt :: WText("Address: ");
     bridgeAddress_ = new Wt:: WLineEdit();
+    //set a mask for the ip address
     bridgeAddress_->setInputMask("009.009.009.009;_");
     bridgeAddress_->setPlaceholderText("enter address");
+    //if the ip stored is not null
     if(user->getBridgeIp().compare("")!=0){
         bridgeAddress_->setText((user->getBridgeIp()));
     }
@@ -62,8 +83,10 @@ void AuthWidget::createLoggedInView(){
 
     Wt :: WText *description3 = new Wt :: WText("Port: ");
     bridgePort_ = new Wt:: WLineEdit();
-    bridgePort_->setInputMask("9999;_");
+    //set a port mask
+    bridgePort_->setInputMask("0099;_");
     bridgePort_->setPlaceholderText("enter port");
+    //if the port stored for the user is not null
     if(user->getBridgePort().compare("")!=0){
         bridgePort_->setText((user->getBridgePort()));
     }
@@ -91,7 +114,10 @@ void AuthWidget::createLoggedInView(){
 
 
 }
-
+/*!
+ *  \brief Connecting to the emulator/bridge, if success redirect them to the main view otherwise display error message
+ *  @authors Yumeng, Jimmy
+ */
 // Check to see if bridge information is correct
 void AuthWidget::ConnectToBridge() {
     Wt::Dbo::Transaction t(session_);
@@ -127,6 +153,10 @@ void AuthWidget::ConnectToBridge() {
     }
 }
 
+/*!
+ *  /brief The main navigation view
+ *  @authors Ossama, Jimmy
+ */
 void AuthWidget::MainPage(){
 
     setTemplateText(tr("template.loggedinAfterMain"));
@@ -171,13 +201,16 @@ void AuthWidget::MainPage(){
                                   "<br/> create new groups of lights and delete groups"
                                   "<br/>Schedules page where you can create schedules for your "
                                   "<br/> lights or groups and even delete them"
-                                  "<br/>Thank you for visting :) :) :) :) :) :) :) :)"
+                                  "<br/>Thank you for visiting :) :) :) :) :) :) :) :)"
         );
         table_->elementAt(5,5)->addWidget(helpText);
     }
 
 
-
+/*!
+ *  \brief Views for the lights
+ *  @authors Yumeng, Alex
+ */
 void AuthWidget:: lightPage(){
     setTemplateText(tr("template.loggedinAfterMain"));
     Wt::Dbo::Transaction t(session_);
@@ -329,7 +362,9 @@ void AuthWidget:: lightPage(){
     bindWidget("table", table_);
 }
 
-// a wait page to avoid no response accepted due to response delay
+/*! \brief a wait page to avoid no response accepted due to response delay
+ * @author Yumeng
+ */
 void AuthWidget :: toWaitPage1(){
     table_->clear();
     getAll = true;
@@ -343,7 +378,10 @@ void AuthWidget :: toWaitPage1(){
     buttonWait1-> clicked().connect(this, &AuthWidget :: toGetAllLight);
 }
 
-// another wait page to avoid no response accepted due to response delay
+/*!
+ * \brief another wait page to avoid no response accepted due to response delay
+ * @author Yumeng
+ */
 void AuthWidget :: toWaitPage2(){
     table_->clear();
     bridge_.get_oneLight(lightIdEdit_->text().toUTF8().c_str());
@@ -356,7 +394,10 @@ void AuthWidget :: toWaitPage2(){
 
 }
 
-// method to get all light
+/*!
+ * \brief method to get all lights
+ * @author Yumeng
+ */
 void AuthWidget :: toGetAllLight() {
     secondaryPage1 = true;
     getAll = true;
@@ -375,7 +416,9 @@ void AuthWidget :: toGetAllLight() {
     lightButton-> clicked().connect(this, &AuthWidget :: lightPage);
 }
 
-// method to get one specific light information
+/*! \brief method to get one specific light information
+ * @author Yumeng
+ */
 void AuthWidget :: toGetSpecificLight() {
     secondaryPage2 = true;
 
@@ -403,7 +446,9 @@ void AuthWidget :: toGetSpecificLight() {
 
 }
 
-//method to rename a light
+/*! \brief method to rename a light
+ * @author Yumeng
+ */
 void AuthWidget :: toRename() {
     secondaryPage3 = true;
     table_->clear();
@@ -420,7 +465,9 @@ void AuthWidget :: toRename() {
     buttonResult-> clicked().connect(this, &AuthWidget ::  toResult);
 }
 
-// method to change a light's color
+/*! \brief method to change a light's color
+ * @author Yumeng
+ */
 void AuthWidget :: toChangeColor() {
     secondaryPage4 = true;
     table_->clear();
@@ -436,7 +483,9 @@ void AuthWidget :: toChangeColor() {
     buttonResult-> clicked().connect(this, &AuthWidget ::  toResult);
 }
 
-// method to turn on/off a light
+/*! \brief method to turn on/off a light
+ * @author Yumeng
+ */
 void AuthWidget :: toTurn() {
     secondaryPage5 = true;
     table_->clear();
@@ -452,7 +501,9 @@ void AuthWidget :: toTurn() {
     buttonResult-> clicked().connect(this, &AuthWidget :: toResult);
 }
 
-// method to change a light's brightness
+/*! \brief  method to change a light's brightness
+ * @author Yumeng
+ */
 void AuthWidget :: toChangeBrightness() {
     secondaryPage6 = true;
     table_->clear();
@@ -468,7 +519,10 @@ void AuthWidget :: toChangeBrightness() {
     buttonResult-> clicked().connect(this, &AuthWidget :: toResult);
 }
 
-//method to accept the answer from rename, change color, turn on/off, change brightness methods
+/*!
+ * /brief method to accept the answer from rename, change color, turn on/off, change brightness methods
+ * @author Yumeng
+ */
 void AuthWidget :: toResult(){
     // if call rename method
     if(secondaryPage3 == true){
@@ -575,7 +629,10 @@ void AuthWidget :: toResult(){
 }
 
 
-
+/*!
+ * \brief View for schedules
+ * @author Marlin
+ */
 void AuthWidget:: schedulePage(){
     //marlin
     setTemplateText(tr("template.loggedinAfterMain"));
@@ -593,7 +650,10 @@ void AuthWidget:: schedulePage(){
         bindWidget("table", table_);
      */
 }
-
+/*!
+ *  \brief View for the groups
+ *  @authors Ossama, Jimmy
+ */
 void AuthWidget::groupPage(){
     setTemplateText(tr("template.loggedinAfterMain"));
 
@@ -624,7 +684,7 @@ void AuthWidget::groupPage(){
     table_->elementAt(3,6)->addWidget(del);
     table_->elementAt(4,3)->addWidget(getGroupsId);
 
-    //create innertable and addd to main table
+    //create displaytable and add to main table
     //used for the view
     displayTable = new Wt :: WTable();
     table_->elementAt(5,7)->addWidget(displayTable);
@@ -654,9 +714,9 @@ void AuthWidget::groupPage(){
 
 }
 
-/*
- * onclick for the view button
- * displays the information brought from the json into the display table
+/*!
+ * \brief displays the information brought from the json into the display table
+ * @author Ossama
  */
 void AuthWidget::viewNow(){
     //get the state string from the previous call to the emulator
@@ -671,11 +731,20 @@ void AuthWidget::viewNow(){
 
 }
 
+/*!
+ *  \brief obtain the state of the group via id
+ * @param id
+ * @author Ossama
+ */
 void AuthWidget::individualGroupButton(string id){
     //get the state of the group specified by the id
     group->getState(id);
 }
 
+/*!
+ * \brief handle the getGroups call
+ * @author Ossama
+ */
 void AuthWidget::getGroupsIdHandler() {
     string ID = group->getGroupIdList();
     cout << "the id is:       " << ID << endl;
@@ -692,7 +761,10 @@ void AuthWidget::getGroupsIdHandler() {
     }
 }
 
-
+/*!
+ * \brief show the add Groups dialog to the user
+ * @author Jimmy
+ */
 void AuthWidget::showGroupAdd() {
     //setting the title
     addDialog_ = new WDialog("Add");
@@ -720,6 +792,12 @@ void AuthWidget::showGroupAdd() {
     addDialog_->setMovable(false);
 
 }
+
+/*!
+ * \brief handle the addDialog after user clicks the ok button
+ * @param code
+ * @author Jimmy
+ */
 void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
     if(code == Wt::WDialog::Accepted){
         string name,lights;
@@ -742,7 +820,10 @@ void AuthWidget::addDialogDone(Wt::WDialog::DialogCode code){
     delete addDialog_;
 }
 
-
+/*!
+ * \brief Display a dialog to the user to modify a group
+ * @author Jimmy
+ */
 void AuthWidget::showGroupModify() {
     modDialog_ = new WDialog("Modify");
 
@@ -801,7 +882,11 @@ void AuthWidget::showGroupModify() {
 
 
 }
-
+/*!
+ * \brief Handle the information passed through the dialog
+ * @param code
+ * @author Jimmy
+ */
 void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     string newid,newOn, newBri, newHue,newSat,newLight;
     newid = id->text().toUTF8().c_str();
@@ -830,8 +915,10 @@ void AuthWidget::modDialogDone(Wt::WDialog::DialogCode code){
     delete modDialog_;
 }
 
-//GROUP DELETE DIALOG
-
+/*!
+ * \brief Show the delete dialog to the user
+ * @author Jimmy
+ */
 void AuthWidget::showGroupDelete() {
     //setting the tile of the dialog
     delDialog_ = new WDialog("Delete");
@@ -853,7 +940,11 @@ void AuthWidget::showGroupDelete() {
 
 }
 
-
+/*!
+ * \brief handle the information passed through the delete dialog
+ * @param code
+ * @author Jimmy
+ */
 void AuthWidget::delDialogDone(Wt::WDialog::DialogCode code){
     //if ok button was pressed
     if(code == Wt::WDialog::Accepted){

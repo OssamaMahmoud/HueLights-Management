@@ -1,7 +1,7 @@
-
- //Created by ubuntu on 11/3/17.
-
-
+/*!
+ * \brief Header for AuthWidget
+ *
+ */
 #ifndef AUTH_MYAUTHWIDGET_H
 #define AUTH_MYAUTHWIDGET_H
 
@@ -13,6 +13,9 @@
 #include <Wt/WDialog>
 #include <Wt/WTable>
 #include <Wt/WMessageBox>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include "Bridge.h"
 #include "Group.h"
 #include "RegistrationView.h"

@@ -1,3 +1,6 @@
+/*!
+ * \brief Header class for Bridge.cpp
+ */
 #ifndef AUTH_BRIDGE_H
 
 #define AUTH_BRIDGE_H
