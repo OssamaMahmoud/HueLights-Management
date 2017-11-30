@@ -253,7 +253,7 @@ void Group::handleGetGroups(boost::system::error_code err, const Http::Message &
 
         set<string> names = obj.names();
         for( auto id  : names){
-            cout << "please wiork   " << string(id) << endl;
+            cout << "please work   " << string(id) << endl;
             //this->getState(string(id));
 
             this->groupIdList.append(string(id) + ",");
